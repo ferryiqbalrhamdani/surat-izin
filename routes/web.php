@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Livewire\Auth\Login;
+use App\Livewire\Dashboard;
+use App\Livewire\DataMaster\Role;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +17,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+Route::get('/login', Login::class)->name('login');
+
+// Route::middleware(['auth'])->group(function () {
+Route::get('logout', [AuthController::class, 'logout']);
+
+Route::get('/', Dashboard::class);
+Route::get('/role', Role::class);
+// });
