@@ -112,7 +112,12 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-solid fa-database"></i></div>
                             Data PT
                         </a>
-                        <a class="nav-link" href="tables.html">
+                        <a @if(request()->route()->uri == 'divisi')
+                            class="nav-link active"
+                            @else
+                            class="nav-link"
+                            @endif
+                            href="/divisi">
                             <div class="sb-nav-link-icon"><i class="fas fa-solid fa-database"></i></div>
                             Data Divisi
                         </a>
@@ -170,6 +175,8 @@
         crossorigin="anonymous"></script>
     <script src="{{asset('vendor/sb-admin/js/datatables-simple-demo.js')}}"></script>
     @stack('role')
+    @stack('pt')
+    @stack('divisi')
 </body>
 
 </html>
