@@ -103,7 +103,12 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-solid fa-database"></i></div>
                             Data Role
                         </a>
-                        <a class="nav-link" href="tables.html">
+                        <a @if(request()->route()->uri == 'pt')
+                            class="nav-link active"
+                            @else
+                            class="nav-link"
+                            @endif
+                            href="/pt">
                             <div class="sb-nav-link-icon"><i class="fas fa-solid fa-database"></i></div>
                             Data PT
                         </a>
