@@ -36,12 +36,7 @@
                 <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown"
                     aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <li><a class="dropdown-item" href="#!">Settings</a></li>
-                    <li><a class="dropdown-item" href="#!">Activity Log</a></li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li><a class="dropdown-item" href="#!">Logout</a></li>
+                    <li><a class="dropdown-item" href="/logout">Logout</a></li>
                 </ul>
             </li>
         </ul>
@@ -90,7 +85,12 @@
                             Data Lembur
                         </a>
                         <div class="sb-sidenav-menu-heading">Data Master</div>
-                        <a class="nav-link" href="charts.html">
+                        <a @if(request()->route()->uri == 'user')
+                            class="nav-link active"
+                            @else
+                            class="nav-link"
+                            @endif
+                            href="/user">
                             <div class="sb-nav-link-icon"><i class="fas fa-solid fa-users-gear"></i></div>
                             Data User
                         </a>
@@ -138,8 +138,8 @@
                     </div>
                 </div>
                 <div class="sb-sidenav-footer">
-                    <div class="small">Logged in as:</div>
-                    Start Bootstrap
+                    <div class="small">Login Sebagai:</div>
+                    {{Auth::user()->name}}
                 </div>
             </nav>
         </div>
@@ -177,6 +177,7 @@
     @stack('role')
     @stack('pt')
     @stack('divisi')
+    @stack('users')
 </body>
 
 </html>

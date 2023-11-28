@@ -26,7 +26,7 @@ class Login extends Component
         if (Auth::attempt($credentials)) {
             if (Auth::user()->status == 1) {
 
-                Alert::toast('Selamat Datang ' . Auth::user()->nama, 'success');
+                Alert::toast('Selamat Datang ' . Auth::user()->name, 'success');
                 return redirect('/');
             }
             Alert::error('Gagal login', 'Akun user dibekukan, silahkan hubungi admin untuk info lebih lanjut.');
