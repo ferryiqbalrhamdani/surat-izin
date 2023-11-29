@@ -270,6 +270,22 @@
 
                                 </div>
                             </div>
+                            @foreach ($permissions as $p)
+                            <div class="row">
+                                <div class="col-6 col-lg-6">
+                                    <input class="form-check-input" type="checkbox" value="{{$p->id}}"
+                                        @foreach($has_role as $hr) @if ($hr->role_id == $role_id)
+                                    checked
+                                    @endif
+                                    @endforeach
+
+                                    id="{{$p->name}}">
+                                    <label class="form-check-label" for="{{$p->name}}">
+                                        {{$p->name}}
+                                    </label>
+                                </div>
+                            </div>
+                            @endforeach
                         </div>
                     </div>
             </div>

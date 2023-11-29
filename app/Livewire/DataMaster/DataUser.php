@@ -3,9 +3,11 @@
 namespace App\Livewire\DataMaster;
 
 use App\Models\Divisi;
+use App\Models\Permission;
 use App\Models\PT;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Rule;
@@ -38,16 +40,18 @@ class DataUser extends Component
     public $password;
     #[Rule('required|string')]
     public $jk = 'L';
-    #[Rule('required')]
+    #[Rule('required', as: 'divisi')]
     public $divisi_id;
-    #[Rule('required')]
+    #[Rule('required', as: 'PT')]
     public $pt_id;
-    #[Rule('required')]
+    #[Rule('required', as: 'role user')]
     public $role_id;
 
     public $pt = [];
     public $divisi = [];
     public $role = [];
+    public $permissions = [];
+    public $has_role = [];
 
     public $showpassword = false;
 
@@ -56,6 +60,8 @@ class DataUser extends Component
         $this->pt = PT::all();
         $this->divisi = Divisi::all();
         $this->role = Role::all();
+        $this->permissions = Permission::all();
+        $this->has_role = DB::table('role_has_permissions')->get();
     }
 
     public function sortBy($sortField)
@@ -83,7 +89,15 @@ class DataUser extends Component
 
     public function addUser()
     {
-        $this->validate();
+        $this->validate([
+            'username' => 'required|string|alpha_dash|min:3|unique:users,username',
+            'name' => 'required|string',
+            'password' => 'required|string',
+            'jk' => 'required|string',
+            'divisi_id' => 'required',
+            'pt_id' => 'required',
+            'role_id' => 'required',
+        ]);
 
         User::create([
             'username' => $this->username,

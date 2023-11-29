@@ -28,9 +28,9 @@ Route::get('/login', Login::class)->name('login');
 Route::middleware(['auth'])->group(function () {
     Route::get('logout', [AuthController::class, 'logout']);
 
-    Route::get('/', Dashboard::class);
-    Route::get('/role', Role::class);
-    Route::get('/pt', DataPt::class);
-    Route::get('/divisi', DataDivisi::class);
-    Route::get('/user', DataUser::class);
+    Route::get('/', Dashboard::class)->name('dashboard')->middleware('can:view_dashboard');
+    Route::get('/role', Role::class)->middleware('can:view_data_role');
+    Route::get('/pt', DataPt::class)->middleware('can:view_data_pt');
+    Route::get('/divisi', DataDivisi::class)->middleware('can:view_data_divisi');
+    Route::get('/user', DataUser::class)->middleware('can:view_data_user');
 });
