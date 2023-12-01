@@ -3,6 +3,8 @@
 use App\Http\Controllers\AuthController;
 use App\Livewire\Auth\Login;
 use App\Livewire\Dashboard;
+use App\Livewire\DataInput\SuratIzin;
+use App\Livewire\DataInput\SuratIzin\Create;
 use App\Livewire\DataMaster\DataDivisi;
 use App\Livewire\DataMaster\DataPt;
 use App\Livewire\DataMaster\DataUser;
@@ -29,6 +31,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('logout', [AuthController::class, 'logout']);
 
     Route::get('/', Dashboard::class)->name('dashboard')->middleware('can:view_dashboard');
+
+    // data input
+    Route::get('/surat-izin', SuratIzin::class)->middleware('can:view_surat_izin');
+    Route::get('/surat-izin/tambah-data', Create::class)->middleware('can:view_surat_izin');
+
+
+    // data master
     Route::get('/role', Role::class)->middleware('can:view_data_role');
     Route::get('/pt', DataPt::class)->middleware('can:view_data_pt');
     Route::get('/divisi', DataDivisi::class)->middleware('can:view_data_divisi');

@@ -15,7 +15,7 @@
         <div class="row">
             <div class="col">
                 <div class="table-responsive">
-                    <div class="card mb-4">
+                    <div class="card mb-4 shadow-sm">
                         <div class="card-header">
                             <i class="fas fa-table me-1"></i>
                             Table Divisi

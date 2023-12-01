@@ -56,8 +56,16 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                             Dashboard
                         </a>
+                        @if (Auth::user()->role_id == 1 || Auth::user()->role_id == 2 || Auth::user()->role_id == 4)
+
                         <div class="sb-sidenav-menu-heading">Data Input</div>
-                        <a class="nav-link" href="charts.html">
+                        <a @if(request()->route()->uri == 'surat-izin' || request()->route()->uri ==
+                            'surat-izin/tambah-data')
+                            class="nav-link active"
+                            @else
+                            class="nav-link"
+                            @endif
+                            href="/surat-izin">
                             <div class="sb-nav-link-icon">
                                 <i class="fas fa-solid fa-envelope-open-text"></i>
                             </div>
@@ -71,6 +79,9 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-solid fa-envelope-open-text"></i></div>
                             Izin Lembur
                         </a>
+                        @endif
+
+                        @if (Auth::user()->role_id == 1 || Auth::user()->role_id == 4 || Auth::user()->role_id == 3)
                         <div class="sb-sidenav-menu-heading">Data</div>
                         <a class="nav-link" href="charts.html">
                             <div class="sb-nav-link-icon"><i class="fas fa-solid fa-table"></i></div>
@@ -84,6 +95,9 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-solid fa-table"></i></div>
                             Data Lembur
                         </a>
+                        @endif
+
+                        @if (Auth::user()->role_id == 1)
                         <div class="sb-sidenav-menu-heading">Data Master</div>
                         <a @if(request()->route()->uri == 'user')
                             class="nav-link active"
@@ -135,6 +149,7 @@
                                 <a class="nav-link" href="layout-sidenav-light.html">Surat Izin Lembur</a>
                             </nav>
                         </div>
+                        @endif
                     </div>
                 </div>
                 <div class="sb-sidenav-footer">
@@ -143,7 +158,7 @@
                 </div>
             </nav>
         </div>
-        <div id="layoutSidenav_content">
+        <div id="layoutSidenav_content" style="background-color: #F2F2F2">
             <main>
                 {{ $slot }}
 
@@ -178,6 +193,7 @@
     @stack('pt')
     @stack('divisi')
     @stack('users')
+    @stack('surat-izin')
 </body>
 
 </html>
