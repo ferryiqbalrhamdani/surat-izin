@@ -75,7 +75,13 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-solid fa-envelope-open-text"></i></div>
                             Izin Cuti
                         </a>
-                        <a class="nav-link" href="charts.html">
+                        <a @if(request()->route()->uri == 'izin-lembur' || request()->route()->uri ==
+                            'izin-lembur/tambah-data')
+                            class="nav-link active"
+                            @else
+                            class="nav-link"
+                            @endif
+                            href="/izin-lembur">
                             <div class="sb-nav-link-icon"><i class="fas fa-solid fa-envelope-open-text"></i></div>
                             Izin Lembur
                         </a>
@@ -158,7 +164,7 @@
                 </div>
             </nav>
         </div>
-        <div id="layoutSidenav_content" style="background-color: #F2F2F2">
+        <div id="layoutSidenav_content" style="background-color: #F6F9FF">
             <main>
                 {{ $slot }}
 
@@ -194,6 +200,7 @@
     @stack('divisi')
     @stack('users')
     @stack('surat-izin')
+    @stack('izin-lembur')
 </body>
 
 </html>
