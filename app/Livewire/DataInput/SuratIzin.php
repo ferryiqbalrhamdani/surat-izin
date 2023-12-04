@@ -52,11 +52,18 @@ class SuratIzin extends Component
 
     public function mount()
     {
-        $dataDari = ModelsSuratIzin::orderBy('tanggal_izin', 'asc')->first();
-        $dataSampai = ModelsSuratIzin::orderBy('tanggal_izin', 'desc')->first();
+        $dataDari = ModelsSuratIzin::where('user_id', Auth::user()->id)->orderBy('tanggal_izin', 'asc')->first();
+        $dataSampai = ModelsSuratIzin::where('user_id', Auth::user()->id)->orderBy('tanggal_izin', 'desc')->first();
 
-        $this->dari = Carbon::parse($dataDari->tanggal_izin)->format('Y-m-d');
-        $this->sampai = Carbon::parse($dataSampai->tanggal_izin)->format('Y-m-d');
+        // dd($dataDari, $dataSampai);
+
+        if ($dataDari == NULL) {
+            $this->dari = Carbon::now()->format('Y-m-d');
+            $this->sampai = Carbon::now()->format('Y-m-d');
+        } else {
+            $this->dari = Carbon::parse($dataDari->tanggal_izin)->format('Y-m-d');
+            $this->sampai = Carbon::parse($dataSampai->tanggal_izin)->format('Y-m-d');
+        }
     }
 
     protected function rules()

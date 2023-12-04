@@ -38,11 +38,16 @@ class IzinLembur extends Component
 
     public function mount()
     {
-        $dataDari = Lembur::orderBy('tanggal_lembur', 'asc')->first();
-        $dataSampai = Lembur::orderBy('tanggal_lembur', 'desc')->first();
+        $dataDari = Lembur::where('user_id', Auth::user()->id)->orderBy('tanggal_lembur', 'asc')->first();
+        $dataSampai = Lembur::where('user_id', Auth::user()->id)->orderBy('tanggal_lembur', 'desc')->first();
 
-        $this->dari = Carbon::parse($dataDari->tanggal_lembur)->format('Y-m-d');
-        $this->sampai = Carbon::parse($dataSampai->tanggal_lembur)->format('Y-m-d');
+        if ($dataDari == NULL) {
+            $this->dari = Carbon::now()->format('Y-m-d');
+            $this->sampai = Carbon::now()->format('Y-m-d');
+        } else {
+            $this->dari = Carbon::parse($dataDari->tanggal_lembur)->format('Y-m-d');
+            $this->sampai = Carbon::parse($dataSampai->tanggal_lembur)->format('Y-m-d');
+        }
     }
 
     public function sortBy($sortField)

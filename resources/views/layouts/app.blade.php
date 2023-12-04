@@ -95,9 +95,17 @@
 
                         @if (Auth::user()->role_id == 1 || Auth::user()->role_id == 4 || Auth::user()->role_id == 3)
                         <div class="sb-sidenav-menu-heading">Data</div>
-                        <a class="nav-link" href="charts.html">
+                        <a @if(request()->route()->uri == 'data-izin')
+                            class="nav-link active"
+                            @else
+                            class="nav-link"
+                            @endif
+                            href="/data-izin">
                             <div class="sb-nav-link-icon"><i class="fas fa-solid fa-table"></i></div>
                             Data Izin
+                            {{-- <span class="badge text-bg-secondary" style="margin-left: 30px;">
+                                {{ DB::table('tb_izin')->where('status', 0)->count() }}
+                            </span> --}}
                         </a>
                         <a class="nav-link" href="charts.html">
                             <div class="sb-nav-link-icon"><i class="fas fa-solid fa-table"></i></div>
@@ -208,6 +216,7 @@
     @stack('surat-izin')
     @stack('izin-lembur')
     @stack('izin-cuti')
+    @stack('data-izin')
 </body>
 
 </html>

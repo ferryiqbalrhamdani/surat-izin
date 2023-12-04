@@ -1,17 +1,34 @@
 <div>
-    @include('livewire.modal.data-input.surat-izin-modal')
+    @include('livewire.modal.data.data-izin-modal')
     <div class="container-fluid px-4">
-        <h1 class="mt-4">Surat Izin</h1>
-        <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item active">Surat Izin</li>
-        </ol>
-        <div class="row">
-            <div class="col-12 col-lg-3 col-md-6 mb-3">
-                <a href="/surat-izin/tambah-data" class="btn btn-lg btn-dark form-control"><i
-                        class="fas fa-solid fa-plus"></i> Tambah
-                    Data</a>
+        <div class="d-flex justify-content-between">
+            <div class="">
+                <h1 class="mt-4">Data Izin</h1>
             </div>
+            <div class="mt-4">
+                @if(Auth::user()->role_id == 4)
+                @if($countAtasan != NULL)
+                <span class="badge rounded-pill bg-danger">{{
+                    $countAtasan }}</span>
+                @endif
+                @elseif(Auth::user()->role_id == 3)
+                @if($countHrd != NULL)
+                <span class="badge rounded-pill bg-danger">{{
+                    $countHrd }}</span>
+                @endif
+                @endif
+            </div>
+
         </div>
+
+
+
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item active">Data Izin</li>
+        </ol>
+
+        {{-- {{dd($dataIzin)}} --}}
+
         <div class="row">
             <div class="col">
                 <div class="table-responsive">
@@ -21,7 +38,7 @@
                                 <div class="col-12 col-md-4 col-lg-6">
                                     <h6 class="mt-1">
                                         <i class="fas fa-table me-1"></i>
-                                        Tabel Surat Izin
+                                        Tabel Lembur
                                     </h6>
                                 </div>
                                 <div class="col-12 col-md-8 col-lg-6">
@@ -65,6 +82,16 @@
                                 <table class="table table-bordered table-hover shadow-sm" style="white-space: nowrap">
                                     <thead class="table-dark">
                                         <tr>
+                                            <th scope="col">
+                                                Nama
+                                                <span wire:click="sortBy('name')"
+                                                    style="cursor: pointer; font-size: 10px">
+                                                    <i
+                                                        class="fa fa-arrow-up {{$sortField === 'name' && $sortDirection === 'asc' ? '' : 'text-muted'}} "></i>
+                                                    <i
+                                                        class="fa fa-arrow-down {{$sortField === 'name' && $sortDirection === 'desc' ? '' : 'text-muted'}}"></i>
+                                                </span>
+                                            </th>
                                             <th scope="col">
                                                 Keperluan Izin
                                                 <span wire:click="sortBy('keperluan_izin')"
@@ -129,92 +156,185 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if ($suratIzin->count() == 0)
+                                        @if(Auth::user()->role_id == 4)
+                                        @if ($dataIzin->count() == 0)
                                         <tr>
-                                            <td colspan="7" class="text-center">Tidak ada data.</td>
+                                            <td colspan="8" class="text-center">Tidak ada data.</td>
                                         </tr>
                                         @else
-
-                                        @foreach ($suratIzin as $si)
+                                        @foreach ($dataIzin as $di)
                                         <tr class="">
                                             <td scope="row">
-                                                {{$si->keperluan_izin }}
+                                                {{$di->name}}
                                             </td>
                                             <td>
-                                                {{date('Y-m-d', strtotime($si->tanggal_izin)) }}
+                                                {{$di->keperluan_izin}}
                                             </td>
                                             <td>
-                                                {{$si->durasi_izin}} hari
+                                                {{date('Y-m-d', strtotime($di->tanggal_izin)) }}
                                             </td>
                                             <td>
-                                                @if($si->jam_masuk != null)
-                                                {{date('H:i', strtotime($si->jam_masuk)) }}
+                                                {{$di->durasi_izin}} hari
+                                            </td>
+                                            <td>
+                                                @if($di->jam_masuk != null)
+                                                {{date('H:i', strtotime($di->jam_masuk)) }}
                                                 @else
                                                 -
                                                 @endif
                                             </td>
                                             <td>
-                                                @if($si->jam_keluar != null)
-                                                {{date('H:i', strtotime($si->jam_keluar)) }}
+                                                @if($di->jam_keluar != null)
+                                                {{date('H:i', strtotime($di->jam_keluar)) }}
                                                 @else
                                                 -
                                                 @endif
                                             </td>
                                             <td>
-                                                @if($si->status == 0)
+                                                @if ($di->status == 0)
                                                 <span class="badge rounded-pill text-bg-warning">proccess</span>
-                                                @elseif($si->status == 1)
+                                                @elseif($di->status == 1)
                                                 <span class="badge rounded-pill text-bg-success">approved</span>
-                                                @if($si->status_hrd == 0)
+                                                @if ($di->status_hrd == 0)
                                                 <span class="badge rounded-pill text-bg-warning">proccess by HRD</span>
-                                                @elseif($si->status_hrd == 1)
+                                                @elseif($di->status_hrd == 1)
                                                 <span class="badge rounded-pill text-bg-success">approved by HRD</span>
-                                                @elseif($si->status_hrd == 2)
+                                                @elseif($di->status_hrd == 2)
                                                 <span class="badge rounded-pill text-bg-danger">rejected by HRD</span>
                                                 @endif
-                                                @elseif($si->status == 2)
+                                                @elseif($di->status == 2)
                                                 <span class="badge rounded-pill text-bg-danger">rejected</span>
                                                 @endif
                                             </td>
                                             <td class="text-center">
                                                 <button class="btn btn-sm btn-primary"
-                                                    wire:click='lihatSuratIzin({{$si->id}})'>
+                                                    wire:click='lihatSuratIzin({{$di->id}})'>
                                                     <i class="fa-solid fa-eye"></i>
                                                 </button>
-                                                <button class="btn btn-sm btn-danger" @if($si->status != 0)
-                                                    disabled
-                                                    @endif
-                                                    wire:click='hapusSuratIzin({{$si->id}})'>
-                                                    <i class="fa-solid fa-trash"></i>
+                                                @if(Auth::user()->role_id == 4)
+                                                @if($di->status == 0)
+                                                <button class="btn btn-sm btn-success "
+                                                    wire:click='approveAtasan({{$di->id}})'>
+                                                    <i class="fa-solid fa-circle-check"></i>
                                                 </button>
-                                                <button class="btn btn-sm btn-success" @if($si->status != 0)
-                                                    disabled
-                                                    @endif
-                                                    wire:click='ubahSuratIzin({{$si->id}})'>
-                                                    <i class="fa-solid fa-pen-to-square"></i>
+                                                <button class="btn btn-sm btn-danger"
+                                                    wire:click='rejectAtasan({{$di->id}})'>
+                                                    <i class="fa-solid fa-circle-xmark"></i>
                                                 </button>
+                                                @else
+                                                <button class="btn btn-sm btn-secondary"
+                                                    wire:click='resetAtasan({{$di->id}})' @if($di->status_hrd > 0)
+                                                    disabled
+                                                    @endif>
+                                                    <i class="fa-solid fa-arrow-rotate-left"></i> Reset
+                                                </button>
+                                                @endif
+                                                @endif
                                             </td>
                                         </tr>
                                         @endforeach
                                         @endif
+                                        @elseif(Auth::user()->role_id == 3)
+                                        @if ($dataIzinHrd->count() == 0)
+                                        <tr>
+                                            <td colspan="8" class="text-center">Tidak ada data.</td>
+                                        </tr>
+                                        @else
+                                        @foreach ($dataIzinHrd as $dih)
+                                        <tr class="">
+                                            <td scope="row">
+                                                {{$dih->name}}
+                                            </td>
+                                            <td>
+                                                {{$dih->keperluan_izin}}
+                                            </td>
+                                            <td>
+                                                {{date('Y-m-d', strtotime($dih->tanggal_izin)) }}
+                                            </td>
+                                            <td>
+                                                {{$dih->durasi_izin}} hari
+                                            </td>
+                                            <td>
+                                                @if($dih->jam_masuk != null)
+                                                {{date('H:i', strtotime($dih->jam_masuk)) }}
+                                                @else
+                                                -
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if($dih->jam_keluar != null)
+                                                {{date('H:i', strtotime($dih->jam_keluar)) }}
+                                                @else
+                                                -
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if($dih->status_hrd == 0)
+                                                <span class="badge rounded-pill text-bg-warning">proccess</span>
+                                                @elseif($dih->status_hrd == 1)
+                                                <span class="badge rounded-pill text-bg-success">approved</span>
+                                                @elseif($dih->status_hrd == 2)
+                                                <span class="badge rounded-pill text-bg-danger">rejected</span>
+                                                @endif
 
-
+                                            </td>
+                                            <td class="text-center">
+                                                <button class="btn btn-sm btn-primary"
+                                                    wire:click='lihatSuratIzin({{$dih->id}})'>
+                                                    <i class="fa-solid fa-eye"></i>
+                                                </button>
+                                                @if($dih->status_hrd == 0)
+                                                <button class="btn btn-sm btn-success "
+                                                    wire:click='approveHrd({{$dih->id}})'>
+                                                    <i class="fa-solid fa-circle-check"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-danger"
+                                                    wire:click='rejectHrd({{$dih->id}})'>
+                                                    <i class="fa-solid fa-circle-xmark"></i>
+                                                </button>
+                                                @else
+                                                <button class="btn btn-sm btn-secondary"
+                                                    wire:click='resetHrd({{$dih->id}})'>
+                                                    <i class="fa-solid fa-arrow-rotate-left"></i> Reset
+                                                </button>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                        @endif
+                                        @endif
                                     </tbody>
                                 </table>
                             </div>
+                            @if(Auth::user()->role_id == 4)
                             <div class="row">
                                 <div class="col-12 col-lg-8">
-                                    <span>Halaman : {{ $suratIzin->currentPage() }} </span><br />
-                                    <span>Jumlah Data : @if($search == '') {{$suratIzin->total()}} @else
-                                        {{$suratIzin->count() }}
+                                    <span>Halaman : {{ $dataIzin->currentPage() }} </span><br />
+                                    <span>Jumlah Data : @if($search == '') {{$dataIzin->total()}} @else
+                                        {{$dataIzin->count() }}
                                         @endif</span><br />
-                                    <span>Data Per Halaman : {{ $suratIzin->perPage()}} </span><br /><br />
+                                    <span>Data Per Halaman : {{ $dataIzin->perPage()}} </span><br /><br />
                                 </div>
                                 <div class="col-12 col-lg-4 d-flex justify-content-end">
-                                    {{$suratIzin->links()}}
+                                    {{$dataIzin->links()}}
 
                                 </div>
                             </div>
+                            @elseif(Auth::user()->role_id == 3)
+                            <div class="row">
+                                <div class="col-12 col-lg-8">
+                                    <span>Halaman : {{ $dataIzinHrd->currentPage() }} </span><br />
+                                    <span>Jumlah Data : @if($search == '') {{$dataIzinHrd->total()}} @else
+                                        {{$dataIzinHrd->count() }}
+                                        @endif</span><br />
+                                    <span>Data Per Halaman : {{ $dataIzinHrd->perPage()}} </span><br /><br />
+                                </div>
+                                <div class="col-12 col-lg-4 d-flex justify-content-end">
+                                    {{$dataIzinHrd->links()}}
+
+                                </div>
+                            </div>
+                            @endif
                         </div>
                     </div>
                 </div>

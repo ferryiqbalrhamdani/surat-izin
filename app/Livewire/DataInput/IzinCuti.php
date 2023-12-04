@@ -44,11 +44,16 @@ class IzinCuti extends Component
 
     public function mount()
     {
-        $dataDari = Cuti::orderBy('tanggal_cuti', 'asc')->first();
-        $dataSampai = Cuti::orderBy('tanggal_cuti', 'desc')->first();
+        $dataDari = Cuti::where('user_id', Auth::user()->id)->orderBy('tanggal_cuti', 'asc')->first();
+        $dataSampai = Cuti::where('user_id', Auth::user()->id)->orderBy('tanggal_cuti', 'desc')->first();
 
-        $this->dari = Carbon::parse($dataDari->tanggal_cuti)->format('Y-m-d');
-        $this->sampai = Carbon::parse($dataSampai->tanggal_cuti)->format('Y-m-d');
+        if ($dataDari == NULL) {
+            $this->dari = Carbon::now()->format('Y-m-d');
+            $this->sampai = Carbon::now()->format('Y-m-d');
+        } else {
+            $this->dari = Carbon::parse($dataDari->tanggal_cuti)->format('Y-m-d');
+            $this->sampai = Carbon::parse($dataSampai->tanggal_cuti)->format('Y-m-d');
+        }
     }
 
     public function sortBy($sortField)
