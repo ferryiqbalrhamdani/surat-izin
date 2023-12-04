@@ -3,6 +3,8 @@
 use App\Http\Controllers\AuthController;
 use App\Livewire\Auth\Login;
 use App\Livewire\Dashboard;
+use App\Livewire\DataInput\IzinCuti;
+use App\Livewire\DataInput\IzinCuti\Create as IzinCutiCreate;
 use App\Livewire\DataInput\IzinLembur;
 use App\Livewire\DataInput\IzinLembur\Create as IzinLemburCreate;
 use App\Livewire\DataInput\SuratIzin;
@@ -39,6 +41,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/surat-izin/tambah-data', Create::class)->middleware('can:view_surat_izin');
     Route::get('/izin-lembur', IzinLembur::class)->middleware('can:view_izin_lembur');
     Route::get('/izin-lembur/tambah-data', IzinLemburCreate::class)->middleware('can:view_izin_lembur');
+    Route::get('/izin-cuti', IzinCuti::class)->middleware('can:view_izin_cuti');
+    Route::get('/izin-cuti/tambah-data', IzinCutiCreate::class)->middleware('can:view_izin_cuti');
 
 
     // data master

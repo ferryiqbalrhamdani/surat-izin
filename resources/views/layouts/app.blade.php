@@ -71,7 +71,13 @@
                             </div>
                             Surat Izin
                         </a>
-                        <a class="nav-link" href="charts.html">
+                        <a @if(request()->route()->uri == 'izin-cuti' || request()->route()->uri ==
+                            'izin-cuti/tambah-data')
+                            class="nav-link active"
+                            @else
+                            class="nav-link"
+                            @endif
+                            href="/izin-cuti">
                             <div class="sb-nav-link-icon"><i class="fas fa-solid fa-envelope-open-text"></i></div>
                             Izin Cuti
                         </a>
@@ -201,6 +207,7 @@
     @stack('users')
     @stack('surat-izin')
     @stack('izin-lembur')
+    @stack('izin-cuti')
 </body>
 
 </html>
