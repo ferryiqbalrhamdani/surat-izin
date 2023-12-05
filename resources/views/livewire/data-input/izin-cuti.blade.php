@@ -156,7 +156,7 @@
                                                 @elseif($c->status == 2)
                                                 <span class="badge rounded-pill text-bg-danger">rejected</span>
                                                 @endif
-                                                @elseif(Auth::user()->role_id == 3)
+                                                @elseif(Auth::user()->role_id == 4)
                                                 @if($c->status_hrd == 0)
                                                 <span class="badge rounded-pill text-bg-warning">proccess</span>
                                                 @elseif($c->status_hrd == 1)

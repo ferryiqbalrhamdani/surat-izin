@@ -1,9 +1,9 @@
 <div>
-    @include('livewire.modal.data.data-izin-modal')
+    @include('livewire.modal.data.data-cuti-modal')
     <div class="container-fluid px-4">
         <div class="d-flex justify-content-between">
             <div class="">
-                <h1 class="mt-4">Data Izin</h1>
+                <h1 class="mt-4">Data Cuti</h1>
             </div>
             <div class="mt-4">
                 @if(Auth::user()->role_id == 4)
@@ -21,13 +21,10 @@
 
         </div>
 
-
-
         <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item active">Data Izin</li>
+            <li class="breadcrumb-item active">Data Cuti</li>
         </ol>
 
-        {{-- {{dd($dataIzin)}} --}}
 
         <div class="row">
             <div class="col">
@@ -38,7 +35,7 @@
                                 <div class="col-12 col-md-4 col-lg-6">
                                     <h6 class="mt-1">
                                         <i class="fas fa-table me-1"></i>
-                                        Tabel Izin
+                                        Tabel Cuti
                                     </h6>
                                 </div>
                                 <div class="col-12 col-md-8 col-lg-6">
@@ -93,53 +90,33 @@
                                                 </span>
                                             </th>
                                             <th scope="col">
-                                                Keperluan Izin
-                                                <span wire:click="sortBy('keperluan_izin')"
+                                                Keperluan Cuti
+                                                <span wire:click="sortBy('keperluan_cuti')"
                                                     style="cursor: pointer; font-size: 10px">
                                                     <i
-                                                        class="fa fa-arrow-up {{$sortField === 'keperluan_izin' && $sortDirection === 'asc' ? '' : 'text-muted'}} "></i>
+                                                        class="fa fa-arrow-up {{$sortField === 'keperluan_cuti' && $sortDirection === 'asc' ? '' : 'text-muted'}} "></i>
                                                     <i
-                                                        class="fa fa-arrow-down {{$sortField === 'keperluan_izin' && $sortDirection === 'desc' ? '' : 'text-muted'}}"></i>
+                                                        class="fa fa-arrow-down {{$sortField === 'keperluan_cuti' && $sortDirection === 'desc' ? '' : 'text-muted'}}"></i>
                                                 </span>
                                             </th>
                                             <th scope="col">
-                                                Tanggal Izin
-                                                <span wire:click="sortBy('tanggal_izin')"
+                                                Tanggal Cuti
+                                                <span wire:click="sortBy('tanggal_cuti')"
                                                     style="cursor: pointer; font-size: 10px">
                                                     <i
-                                                        class="fa fa-arrow-up {{$sortField === 'tanggal_izin' && $sortDirection === 'asc' ? '' : 'text-muted'}} "></i>
+                                                        class="fa fa-arrow-up {{$sortField === 'tanggal_cuti' && $sortDirection === 'asc' ? '' : 'text-muted'}} "></i>
                                                     <i
-                                                        class="fa fa-arrow-down {{$sortField === 'tanggal_izin' && $sortDirection === 'desc' ? '' : 'text-muted'}}"></i>
+                                                        class="fa fa-arrow-down {{$sortField === 'tanggal_cuti' && $sortDirection === 'desc' ? '' : 'text-muted'}}"></i>
                                                 </span>
                                             </th>
                                             <th scope="col">
-                                                Lama Izin
-                                                <span wire:click="sortBy('durasi_izin')"
+                                                Lama Cuti
+                                                <span wire:click="sortBy('durasi')"
                                                     style="cursor: pointer; font-size: 10px">
                                                     <i
-                                                        class="fa fa-arrow-up {{$sortField === 'durasi_izin' && $sortDirection === 'asc' ? '' : 'text-muted'}} "></i>
+                                                        class="fa fa-arrow-up {{$sortField === 'durasi' && $sortDirection === 'asc' ? '' : 'text-muted'}} "></i>
                                                     <i
-                                                        class="fa fa-arrow-down {{$sortField === 'durasi_izin' && $sortDirection === 'desc' ? '' : 'text-muted'}}"></i>
-                                                </span>
-                                            </th>
-                                            <th scope="col">
-                                                Jam Mulai
-                                                <span wire:click="sortBy('jam_masuk')"
-                                                    style="cursor: pointer; font-size: 10px">
-                                                    <i
-                                                        class="fa fa-arrow-up {{$sortField === 'jam_masuk' && $sortDirection === 'asc' ? '' : 'text-muted'}} "></i>
-                                                    <i
-                                                        class="fa fa-arrow-down {{$sortField === 'jam_masuk' && $sortDirection === 'desc' ? '' : 'text-muted'}}"></i>
-                                                </span>
-                                            </th>
-                                            <th scope="col">
-                                                Jam Akhir
-                                                <span wire:click="sortBy('jam_keluar')"
-                                                    style="cursor: pointer; font-size: 10px">
-                                                    <i
-                                                        class="fa fa-arrow-up {{$sortField === 'jam_keluar' && $sortDirection === 'asc' ? '' : 'text-muted'}} "></i>
-                                                    <i
-                                                        class="fa fa-arrow-down {{$sortField === 'jam_keluar' && $sortDirection === 'desc' ? '' : 'text-muted'}}"></i>
+                                                        class="fa fa-arrow-down {{$sortField === 'durasi' && $sortDirection === 'desc' ? '' : 'text-muted'}}"></i>
                                                 </span>
                                             </th>
                                             <th scope="col">
@@ -157,39 +134,26 @@
                                     </thead>
                                     <tbody>
                                         @if(Auth::user()->role_id == 4)
-                                        @if ($dataIzin->count() == 0)
+                                        @if ($dataCuti->count() == 0)
                                         <tr>
                                             <td colspan="8" class="text-center">Tidak ada data.</td>
                                         </tr>
                                         @else
-                                        @foreach ($dataIzin as $di)
+                                        @foreach ($dataCuti as $di)
                                         <tr class="">
                                             <td scope="row">
                                                 {{$di->name}}
                                             </td>
                                             <td>
-                                                {{$di->keperluan_izin}}
+                                                {{$di->keperluan_cuti}}
                                             </td>
                                             <td>
-                                                {{date('Y-m-d', strtotime($di->tanggal_izin)) }}
+                                                {{date('Y-m-d', strtotime($di->tanggal_cuti)) }}
                                             </td>
                                             <td>
-                                                {{$di->durasi_izin}} hari
+                                                {{$di->durasi}}
                                             </td>
-                                            <td>
-                                                @if($di->jam_masuk != null)
-                                                {{date('H:i', strtotime($di->jam_masuk)) }}
-                                                @else
-                                                -
-                                                @endif
-                                            </td>
-                                            <td>
-                                                @if($di->jam_keluar != null)
-                                                {{date('H:i', strtotime($di->jam_keluar)) }}
-                                                @else
-                                                -
-                                                @endif
-                                            </td>
+
                                             <td>
                                                 @if ($di->status == 0)
                                                 <span class="badge rounded-pill text-bg-warning">proccess</span>
@@ -208,7 +172,7 @@
                                             </td>
                                             <td class="text-center">
                                                 <button class="btn btn-sm btn-primary"
-                                                    wire:click='lihatSuratIzin({{$di->id}})'>
+                                                    wire:click='lihatcuti({{$di->id}})'>
                                                     <i class="fa-solid fa-eye"></i>
                                                 </button>
                                                 @if(Auth::user()->role_id == 4)
@@ -235,39 +199,26 @@
                                         @endforeach
                                         @endif
                                         @elseif(Auth::user()->role_id == 3)
-                                        @if ($dataIzinHrd->count() == 0)
+                                        @if ($dataCutiHrd->count() == 0)
                                         <tr>
                                             <td colspan="8" class="text-center">Tidak ada data.</td>
                                         </tr>
                                         @else
-                                        @foreach ($dataIzinHrd as $dih)
+                                        @foreach ($dataCutiHrd as $dih)
                                         <tr class="">
                                             <td scope="row">
                                                 {{$dih->name}}
                                             </td>
                                             <td>
-                                                {{$dih->keperluan_izin}}
+                                                {{$dih->keperluan_cuti}}
                                             </td>
                                             <td>
-                                                {{date('Y-m-d', strtotime($dih->tanggal_izin)) }}
+                                                {{date('Y-m-d', strtotime($dih->tanggal_cuti)) }}
                                             </td>
                                             <td>
-                                                {{$dih->durasi_izin}} hari
+                                                {{$dih->durasi}}
                                             </td>
-                                            <td>
-                                                @if($dih->jam_masuk != null)
-                                                {{date('H:i', strtotime($dih->jam_masuk)) }}
-                                                @else
-                                                -
-                                                @endif
-                                            </td>
-                                            <td>
-                                                @if($dih->jam_keluar != null)
-                                                {{date('H:i', strtotime($dih->jam_keluar)) }}
-                                                @else
-                                                -
-                                                @endif
-                                            </td>
+
                                             <td>
                                                 @if($dih->status_hrd == 0)
                                                 <span class="badge rounded-pill text-bg-warning">proccess</span>
@@ -280,7 +231,7 @@
                                             </td>
                                             <td class="text-center">
                                                 <button class="btn btn-sm btn-primary"
-                                                    wire:click='lihatSuratIzin({{$dih->id}})'>
+                                                    wire:click='lihatcuti({{$dih->id}})'>
                                                     <i class="fa-solid fa-eye"></i>
                                                 </button>
                                                 @if($dih->status_hrd == 0)
@@ -309,28 +260,28 @@
                             @if(Auth::user()->role_id == 4)
                             <div class="row">
                                 <div class="col-12 col-lg-8">
-                                    <span>Halaman : {{ $dataIzin->currentPage() }} </span><br />
-                                    <span>Jumlah Data : @if($search == '') {{$dataIzin->total()}} @else
-                                        {{$dataIzin->count() }}
+                                    <span>Halaman : {{ $dataCuti->currentPage() }} </span><br />
+                                    <span>Jumlah Data : @if($search == '') {{$dataCuti->total()}} @else
+                                        {{$dataCuti->count() }}
                                         @endif</span><br />
-                                    <span>Data Per Halaman : {{ $dataIzin->perPage()}} </span><br /><br />
+                                    <span>Data Per Halaman : {{ $dataCuti->perPage()}} </span><br /><br />
                                 </div>
                                 <div class="col-12 col-lg-4 d-flex justify-content-end">
-                                    {{$dataIzin->links()}}
+                                    {{$dataCuti->links()}}
 
                                 </div>
                             </div>
                             @elseif(Auth::user()->role_id == 3)
                             <div class="row">
                                 <div class="col-12 col-lg-8">
-                                    <span>Halaman : {{ $dataIzinHrd->currentPage() }} </span><br />
-                                    <span>Jumlah Data : @if($search == '') {{$dataIzinHrd->total()}} @else
-                                        {{$dataIzinHrd->count() }}
+                                    <span>Halaman : {{ $dataCutiHrd->currentPage() }} </span><br />
+                                    <span>Jumlah Data : @if($search == '') {{$dataCutiHrd->total()}} @else
+                                        {{$dataCutiHrd->count() }}
                                         @endif</span><br />
-                                    <span>Data Per Halaman : {{ $dataIzinHrd->perPage()}} </span><br /><br />
+                                    <span>Data Per Halaman : {{ $dataCutiHrd->perPage()}} </span><br /><br />
                                 </div>
                                 <div class="col-12 col-lg-4 d-flex justify-content-end">
-                                    {{$dataIzinHrd->links()}}
+                                    {{$dataCutiHrd->links()}}
 
                                 </div>
                             </div>

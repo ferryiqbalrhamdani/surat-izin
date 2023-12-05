@@ -107,7 +107,12 @@
                                 {{ DB::table('tb_izin')->where('status', 0)->count() }}
                             </span> --}}
                         </a>
-                        <a class="nav-link" href="charts.html">
+                        <a @if(request()->route()->uri == 'data-cuti')
+                            class="nav-link active"
+                            @else
+                            class="nav-link"
+                            @endif
+                            href="/data-cuti">
                             <div class="sb-nav-link-icon"><i class="fas fa-solid fa-table"></i></div>
                             Data Cuti
                         </a>

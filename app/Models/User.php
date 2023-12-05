@@ -24,6 +24,8 @@ class User extends Authenticatable
         'username',
         'password',
         'jk',
+        'status',
+        'employee_status',
         'pt_id',
         'divisi_id',
         'role_id',

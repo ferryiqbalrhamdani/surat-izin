@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Livewire\Auth\Login;
 use App\Livewire\Dashboard;
+use App\Livewire\Data\DataCuti;
 use App\Livewire\Data\DataIzin;
 use App\Livewire\DataInput\IzinCuti;
 use App\Livewire\DataInput\IzinCuti\Create as IzinCutiCreate;
@@ -35,23 +36,24 @@ Route::get('/login', Login::class)->name('login');
 Route::middleware(['auth'])->group(function () {
     Route::get('logout', [AuthController::class, 'logout']);
 
-    Route::get('/', Dashboard::class)->name('dashboard')->middleware('can:view_dashboard');
+    Route::get('/', Dashboard::class)->name('dashboard');
 
     // data input
-    Route::get('/surat-izin', SuratIzin::class)->middleware('can:view_surat_izin');
-    Route::get('/surat-izin/tambah-data', Create::class)->middleware('can:view_surat_izin');
-    Route::get('/izin-lembur', IzinLembur::class)->middleware('can:view_izin_lembur');
-    Route::get('/izin-lembur/tambah-data', IzinLemburCreate::class)->middleware('can:view_izin_lembur');
-    Route::get('/izin-cuti', IzinCuti::class)->middleware('can:view_izin_cuti');
-    Route::get('/izin-cuti/tambah-data', IzinCutiCreate::class)->middleware('can:view_izin_cuti');
+    Route::get('/surat-izin', SuratIzin::class);
+    Route::get('/surat-izin/tambah-data', Create::class);
+    Route::get('/izin-lembur', IzinLembur::class);
+    Route::get('/izin-lembur/tambah-data', IzinLemburCreate::class);
+    Route::get('/izin-cuti', IzinCuti::class);
+    Route::get('/izin-cuti/tambah-data', IzinCutiCreate::class);
 
     // data
     Route::get('/data-izin', DataIzin::class);
+    Route::get('/data-cuti', DataCuti::class);
 
 
     // data master
-    Route::get('/role', Role::class)->middleware('can:view_data_role');
-    Route::get('/pt', DataPt::class)->middleware('can:view_data_pt');
-    Route::get('/divisi', DataDivisi::class)->middleware('can:view_data_divisi');
-    Route::get('/user', DataUser::class)->middleware('can:view_data_user');
+    Route::get('/role', Role::class);
+    Route::get('/pt', DataPt::class);
+    Route::get('/divisi', DataDivisi::class);
+    Route::get('/user', DataUser::class);
 });

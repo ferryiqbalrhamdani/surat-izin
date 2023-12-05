@@ -113,6 +113,19 @@
                             </div>
 
                         </div>
+                        <div class="form-outline mb-4">
+                            <label for="employee_status">Status User<span class="text-danger">*</span></label>
+                            <select class="form-select card-hover @error('employee_status') is-invalid @enderror"
+                                id="role" wire:model.live='employee_status'>
+                                <option value=""></option>
+                                <option value="Tetap">Tetap</option>
+                                <option value="Kontrak">Kontrak</option>
+                            </select>
+                            <div>
+                                @error('employee_status') <span class="text-danger"> {{ $message }}</span> @enderror
+                            </div>
+
+                        </div>
 
                     </div>
             </div>

@@ -46,6 +46,8 @@ class DataUser extends Component
     public $pt_id;
     #[Rule('required', as: 'role user')]
     public $role_id;
+    #[Rule('required', as: 'status user')]
+    public $employee_status;
 
     public $pt = [];
     public $divisi = [];
@@ -60,8 +62,8 @@ class DataUser extends Component
         $this->pt = PT::all();
         $this->divisi = Divisi::all();
         $this->role = Role::all();
-        $this->permissions = Permission::all();
-        $this->has_role = DB::table('role_has_permissions')->get();
+        // $this->permissions = Permission::all();
+        // $this->has_role = DB::table('role_has_permissions')->get();
     }
 
     public function sortBy($sortField)
@@ -97,6 +99,7 @@ class DataUser extends Component
             'divisi_id' => 'required',
             'pt_id' => 'required',
             'role_id' => 'required',
+            'employee_status' => 'required',
         ]);
 
         User::create([
@@ -107,6 +110,7 @@ class DataUser extends Component
             'pt_id' => $this->pt_id,
             'divisi_id' => $this->divisi_id,
             'role_id' => $this->role_id,
+            'employee_status' => $this->employee_status,
         ]);
 
         Alert::toast('Data berhasil ditambahkan.', 'success');
