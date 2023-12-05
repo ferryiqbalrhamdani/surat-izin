@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('lama_izin');
             $table->timestamp('tanggal_izin')->nullable();
             $table->timestamp('sampai_tanggal')->nullable();
-            $table->time('jam_masuk')->format('H:i');
-            $table->time('jam_keluar')->format('H:i');
+            $table->time('jam_masuk')->format('H:i')->nullable();
+            $table->time('jam_keluar')->format('H:i')->nullable();
             $table->text('keterangan_izin')->nullable()->default('text');
             $table->integer('status')->unsigned()->default(0);
             $table->integer('status_hrd')->unsigned()->default(0);

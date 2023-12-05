@@ -5,6 +5,7 @@ use App\Livewire\Auth\Login;
 use App\Livewire\Dashboard;
 use App\Livewire\Data\DataCuti;
 use App\Livewire\Data\DataIzin;
+use App\Livewire\Data\DataLembur;
 use App\Livewire\DataInput\IzinCuti;
 use App\Livewire\DataInput\IzinCuti\Create as IzinCutiCreate;
 use App\Livewire\DataInput\IzinLembur;
@@ -49,6 +50,7 @@ Route::middleware(['auth'])->group(function () {
     // data
     Route::get('/data-izin', DataIzin::class);
     Route::get('/data-cuti', DataCuti::class);
+    Route::get('/data-lembur', DataLembur::class);
 
 
     // data master

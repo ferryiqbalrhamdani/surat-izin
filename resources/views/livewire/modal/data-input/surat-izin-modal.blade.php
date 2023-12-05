@@ -99,6 +99,7 @@
                         <h6>: {{ $keterangan }}
                         </h6>
                     </div>
+                    @if($keperluan_izin == 'Izin Tidak Masuk Kerja')
                     <div class="col-4 col-lg-3">
                         <h6>Bukti Foto</h6>
                     </div>
@@ -106,6 +107,7 @@
                         <h6>: -
                         </h6>
                     </div>
+                    @endif
                 </div>
             </div>
             <div class="modal-footer d-felx justify-content-center">

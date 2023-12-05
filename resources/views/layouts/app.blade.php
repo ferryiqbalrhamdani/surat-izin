@@ -116,7 +116,12 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-solid fa-table"></i></div>
                             Data Cuti
                         </a>
-                        <a class="nav-link" href="charts.html">
+                        <a @if(request()->route()->uri == 'data-lembur')
+                            class="nav-link active"
+                            @else
+                            class="nav-link"
+                            @endif
+                            href="/data-lembur">
                             <div class="sb-nav-link-icon"><i class="fas fa-solid fa-table"></i></div>
                             Data Lembur
                         </a>
@@ -222,6 +227,7 @@
     @stack('izin-lembur')
     @stack('izin-cuti')
     @stack('data-izin')
+    @stack('data-lembur')
 </body>
 
 </html>

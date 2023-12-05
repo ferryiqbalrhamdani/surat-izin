@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Rule;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use RealRashid\SweetAlert\Facades\Alert;
 
@@ -42,6 +43,7 @@ class Login extends Component
         $this->showpassword = !$this->showpassword;
     }
 
+    #[Title('Login')]
     #[Layout('layouts.auth-layout')]
     public function render()
     {
