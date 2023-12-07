@@ -98,6 +98,16 @@
                                                 </span>
                                             </th>
                                             <th scope="col">
+                                                Status Kerja
+                                                <span wire:click="sortBy('employee_status')"
+                                                    style="cursor: pointer; font-size: 10px">
+                                                    <i
+                                                        class="fa fa-arrow-up {{$sortField === 'employee_status' && $sortDirection === 'asc' ? '' : 'text-muted'}} "></i>
+                                                    <i
+                                                        class="fa fa-arrow-down {{$sortField === 'employee_status' && $sortDirection === 'desc' ? '' : 'text-muted'}}"></i>
+                                                </span>
+                                            </th>
+                                            <th scope="col">
                                                 Role
                                                 <span wire:click="sortBy('role_id')"
                                                     style="cursor: pointer; font-size: 10px">
@@ -144,6 +154,9 @@
                                                 {{$u->divisi->name}}
                                             </td>
                                             <td>
+                                                <span class="badge text-bg-warning">{{$u->employee_status}}</span>
+                                            </td>
+                                            <td>
                                                 <span class="badge text-bg-dark">{{$u->role->name}}</span>
                                             </td>
                                             <td class="text-center">
@@ -158,16 +171,17 @@
                                             </td>
                                             <td class="text-center">
                                                 <button class="btn btn-sm btn-secondary"
-                                                    wire:click='resetUser({{$u->id}})'>
-                                                    reset
+                                                    wire:click='resetUser({{$u->id}})' @if($u->role_id == 1) disabled
+                                                    @endif>
+                                                    <i class="fa-solid fa-arrow-rotate-left"></i>
                                                 </button>
-                                                <button class="btn btn-sm btn-danger"
-                                                    wire:click='hapusUser({{$u->id}})'>
-                                                    hapus
+                                                <button class="btn btn-sm btn-danger" wire:click='hapusUser({{$u->id}})'
+                                                    @if($u->role_id == 1) disabled @endif>
+                                                    <i class="fa-solid fa-trash"></i>
                                                 </button>
-                                                <button class="btn btn-sm btn-primary"
-                                                    wire:click='ubahUser({{$u->id}})'>
-                                                    ubah
+                                                <button class="btn btn-sm btn-primary" wire:click='ubahUser({{$u->id}})'
+                                                    @if($u->role_id == 1) disabled @endif>
+                                                    <i class="fa-solid fa-pen-to-square"></i>
                                                 </button>
                                             </td>
                                         </tr>

@@ -177,20 +177,23 @@
                                                 @endif
                                             </td>
                                             <td class="text-center">
-                                                <button class="btn btn-sm btn-primary"
+                                                <button class="btn btn-sm btn-primary" data-bs-toggle="tooltip"
+                                                    data-bs-placement="bottom" title="Lihat detail"
                                                     wire:click='lihatSuratIzin({{$si->id}})'>
                                                     <i class="fa-solid fa-eye"></i>
                                                 </button>
                                                 <button class="btn btn-sm btn-danger" @if($si->status != 0)
                                                     disabled
                                                     @endif
-                                                    wire:click='hapusSuratIzin({{$si->id}})'>
+                                                    wire:click='hapusSuratIzin({{$si->id}})' data-bs-toggle="tooltip"
+                                                    data-bs-placement="bottom" title="Hapus">
                                                     <i class="fa-solid fa-trash"></i>
                                                 </button>
                                                 <button class="btn btn-sm btn-success" @if($si->status != 0)
                                                     disabled
                                                     @endif
-                                                    wire:click='ubahSuratIzin({{$si->id}})'>
+                                                    wire:click='ubahSuratIzin({{$si->id}})' data-bs-toggle="tooltip"
+                                                    data-bs-placement="bottom" title="Ubah">
                                                     <i class="fa-solid fa-pen-to-square"></i>
                                                 </button>
                                             </td>

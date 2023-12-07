@@ -86,10 +86,10 @@
                                             </td>
                                             <td class="text-center">
                                                 <button class="btn btn-sm btn-danger" wire:click='hapusPT({{$dp->id}})'>
-                                                    hapus
+                                                    <i class="fa-solid fa-trash"></i>
                                                 </button>
                                                 <button class="btn btn-sm btn-primary" wire:click='ubahPT({{$dp->id}})'>
-                                                    ubah
+                                                    <i class="fa-solid fa-pen-to-square"></i>
                                                 </button>
                                             </td>
                                         </tr>

@@ -178,20 +178,23 @@
                                                 @endif
                                             </td>
                                             <td class="text-center">
-                                                <button class="btn btn-sm btn-primary"
+                                                <button class="btn btn-sm btn-primary" data-bs-toggle="tooltip"
+                                                    data-bs-placement="bottom" title="Lihat detail"
                                                     wire:click='lihatLembur({{$l->id}})'>
                                                     <i class="fa-solid fa-eye"></i>
                                                 </button>
                                                 <button class="btn btn-sm btn-danger" @if($l->status != 0)
                                                     disabled
                                                     @endif
-                                                    wire:click='hapusLembur({{$l->id}})'>
+                                                    wire:click='hapusLembur({{$l->id}})' data-bs-toggle="tooltip"
+                                                    data-bs-placement="bottom" title="Hapus">
                                                     <i class="fa-solid fa-trash"></i>
                                                 </button>
                                                 <button class="btn btn-sm btn-success" @if($l->status != 0)
                                                     disabled
                                                     @endif
-                                                    wire:click='ubahLembur({{$l->id}})'>
+                                                    wire:click='ubahLembur({{$l->id}})' data-bs-toggle="tooltip"
+                                                    data-bs-placement="bottom" title="Ubah">
                                                     <i class="fa-solid fa-pen-to-square"></i>
                                                 </button>
                                             </td>

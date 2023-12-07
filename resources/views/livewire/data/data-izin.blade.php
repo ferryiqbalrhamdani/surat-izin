@@ -6,17 +6,25 @@
                 <h1 class="mt-4">Data Izin</h1>
             </div>
             <div class="mt-4">
-                @if(Auth::user()->role_id == 4)
-                @if($countAtasan != NULL)
-                <span class="badge rounded-pill bg-danger">{{
-                    $countAtasan }}</span>
-                @endif
-                @elseif(Auth::user()->role_id == 3)
-                @if($countHrd != NULL)
-                <span class="badge rounded-pill bg-danger">{{
-                    $countHrd }}</span>
-                @endif
-                @endif
+                <a class="btn btn-dark position-relative" data-bs-toggle="tooltip" data-bs-placement="left"
+                    title="Pemberitahuan">
+                    <i class="fa-solid fa-bell"></i>
+                    @if(Auth::user()->role_id == 4)
+                    @if($countAtasan != NULL)
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        {{$countAtasan }}
+                    </span>
+                    @endif
+                    @elseif(Auth::user()->role_id == 3)
+                    @if($countHrd != NULL)
+
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        {{$countHrd }}
+                    </span>
+                    @endif
+                    @endif
+                </a>
+                <span class="badge rounded-pill bg-danger"></span>
             </div>
 
         </div>
@@ -207,22 +215,26 @@
                                                 @endif
                                             </td>
                                             <td class="text-center">
-                                                <button class="btn btn-sm btn-primary"
+                                                <button class="btn btn-sm btn-primary" data-bs-toggle="tooltip"
+                                                    data-bs-placement="bottom" title="Lihat detail"
                                                     wire:click='lihatSuratIzin({{$di->id}})'>
                                                     <i class="fa-solid fa-eye"></i>
                                                 </button>
                                                 @if(Auth::user()->role_id == 4)
                                                 @if($di->status == 0)
-                                                <button class="btn btn-sm btn-success "
+                                                <button class="btn btn-sm btn-success " data-bs-toggle="tooltip"
+                                                    data-bs-placement="bottom" title="Approve"
                                                     wire:click='approveAtasan({{$di->id}})'>
                                                     <i class="fa-solid fa-circle-check"></i>
                                                 </button>
-                                                <button class="btn btn-sm btn-danger"
+                                                <button class="btn btn-sm btn-danger" data-bs-toggle="tooltip"
+                                                    data-bs-placement="bottom" title="Reject"
                                                     wire:click='rejectAtasan({{$di->id}})'>
                                                     <i class="fa-solid fa-circle-xmark"></i>
                                                 </button>
                                                 @else
-                                                <button class="btn btn-sm btn-secondary"
+                                                <button class="btn btn-sm btn-secondary" data-bs-toggle="tooltip"
+                                                    data-bs-placement="bottom" title="Reset"
                                                     wire:click='resetAtasan({{$di->id}})' @if($di->status_hrd > 0)
                                                     disabled
                                                     @endif>
@@ -279,21 +291,25 @@
 
                                             </td>
                                             <td class="text-center">
-                                                <button class="btn btn-sm btn-primary"
+                                                <button class="btn btn-sm btn-primary tooltips" data-bs-toggle="tooltip"
+                                                    data-bs-placement="bottom" title="Lihat detail"
                                                     wire:click='lihatSuratIzin({{$dih->id}})'>
                                                     <i class="fa-solid fa-eye"></i>
                                                 </button>
                                                 @if($dih->status_hrd == 0)
-                                                <button class="btn btn-sm btn-success "
+                                                <button class="btn btn-sm btn-success " data-bs-toggle="tooltip"
+                                                    data-bs-placement="bottom" title="Approve"
                                                     wire:click='approveHrd({{$dih->id}})'>
                                                     <i class="fa-solid fa-circle-check"></i>
                                                 </button>
-                                                <button class="btn btn-sm btn-danger"
+                                                <button class="btn btn-sm btn-danger" data-bs-toggle="tooltip"
+                                                    data-bs-placement="bottom" title="Reject"
                                                     wire:click='rejectHrd({{$dih->id}})'>
                                                     <i class="fa-solid fa-circle-xmark"></i>
                                                 </button>
                                                 @else
-                                                <button class="btn btn-sm btn-secondary"
+                                                <button class="btn btn-sm btn-secondary" data-bs-toggle="tooltip"
+                                                    data-bs-placement="bottom" title="Reset"
                                                     wire:click='resetHrd({{$dih->id}})'>
                                                     <i class="fa-solid fa-arrow-rotate-left"></i> Reset
                                                 </button>

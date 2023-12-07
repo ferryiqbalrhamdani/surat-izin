@@ -98,6 +98,9 @@
 @push('data-izin')
 <script>
     window.addEventListener('show-view-modal', event =>{
+        $(document).ready(function(){
+            $('[data-bs-toggle="tooltip"]').tooltip();
+        });
         $('#view').modal('show');
     });
 
@@ -106,7 +109,7 @@
             const data=event
             swal.fire({
                 toast: true,
-                position: "top-end",
+                position: "top",
                 icon:data[0]['icon'],
                 title:data[0]['title'],
                 showConfirmButton: false,
@@ -120,7 +123,7 @@
             const data=event
             swal.fire({
                 toast: true,
-                position: "top-end",
+                position: "top",
                 icon:data[0]['icon'],
                 title:data[0]['title'],
                 showConfirmButton: false,
@@ -134,7 +137,7 @@
             const data=event
             swal.fire({
                 toast: true,
-                position: "top-end",
+                position: "top",
                 icon:data[0]['icon'],
                 title:data[0]['title'],
                 showConfirmButton: false,
@@ -149,7 +152,7 @@
             const data=event
             swal.fire({
                 toast: true,
-                position: "top-end",
+                position: "top",
                 icon:data[0]['icon'],
                 title:data[0]['title'],
                 showConfirmButton: false,
@@ -163,7 +166,7 @@
             const data=event
             swal.fire({
                 toast: true,
-                position: "top-end",
+                position: "top",
                 icon:data[0]['icon'],
                 title:data[0]['title'],
                 showConfirmButton: false,
@@ -177,7 +180,7 @@
             const data=event
             swal.fire({
                 toast: true,
-                position: "top-end",
+                position: "top",
                 icon:data[0]['icon'],
                 title:data[0]['title'],
                 showConfirmButton: false,

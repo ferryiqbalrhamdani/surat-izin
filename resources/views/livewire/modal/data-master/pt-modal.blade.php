@@ -11,7 +11,8 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="name" class="form-label">Nama PT</label>
-                        <input type="text" wire:model.blur='name' id="name" class="form-control">
+                        <input type="text" wire:model.blur='name' id="name"
+                            class="form-control @error('name') is-invalid @enderror">
                         @error('name')
                         <span class="text-danger">
                             {{$message}}
@@ -64,7 +65,8 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="name_edit" class="form-label">Nama PT</label>
-                        <input type="text" wire:model.blur='name' id="name_edit" class="form-control">
+                        <input type="text" wire:model.blur='name' id="name_edit"
+                            class="form-control @error('name') is-invalid @enderror">
                         @error('name')
                         <span class="text-danger">
                             {{$message}}

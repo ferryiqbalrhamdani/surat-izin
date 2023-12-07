@@ -87,11 +87,11 @@
                                             <td class="text-center">
                                                 <button class="btn btn-sm btn-danger"
                                                     wire:click='hapusDivisi({{$dp->id}})'>
-                                                    hapus
+                                                    <i class="fa-solid fa-trash"></i>
                                                 </button>
                                                 <button class="btn btn-sm btn-primary"
                                                     wire:click='ubahDivisi({{$dp->id}})'>
-                                                    ubah
+                                                    <i class="fa-solid fa-pen-to-square"></i>
                                                 </button>
                                             </td>
                                         </tr>

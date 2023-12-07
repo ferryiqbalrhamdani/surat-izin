@@ -56,84 +56,89 @@
                             @endif
                         </h6>
                     </div>
-                    <div class="col-5 col-lg-4">
-                        <h6>Status</h6>
-                    </div>
-                    <div class="col-7 col-lg-8" style="font-size: 12px">
-                        :
-                        @if ($status == 0)
-                        <span class="badge rounded-pill text-bg-warning">proccess</span>
-                        @elseif($status == 1)
-                        <span class="badge rounded-pill text-bg-success">approved</span>
-                        @if ($status_hrd == 0)
-                        <span class="badge rounded-pill text-bg-warning">proccess by HRD</span>
-                        @elseif($status_hrd == 1)
-                        <span class="badge rounded-pill text-bg-success">approved by HRD</span>
-                        @elseif($status_hrd == 2)
-                        <span class="badge rounded-pill text-bg-danger">rejected by HRD</span>
-                        @endif
-                        @elseif($status == 2)
-                        <span class="badge rounded-pill text-bg-danger">rejected</span>
-                        @endif
-                    </div>
-                    <div class="col-5 col-lg-4">
-                        <h6>Keterangan</h6>
-                    </div>
-                    <div class="col-7 col-lg-8">
-                        <h6>: {{ $keterangan }}
-                        </h6>
-                    </div>
+                    @if(Auth::user()->role_id == 3)
+                    @if(date('G', strtotime($lama_lembur)) <= 5) <div class="col-5 col-lg-4">
+                        <h6>Upah Lembur</h6>
                 </div>
-                @if(Auth::user()->role_id == 3)
-                <div class="table-responsive mt-3" style="font-size: 14px;">
-                    @if(date('G', strtotime($lama_lembur)) <= 5) <p style="font-size: 12px; margin-bottom: 0px"><sup
-                            class="text-danger">*</sup> Upah Lembur Perjam:
-                        Rp 15.000</p>
-                        @endif
-                        <table class="table table-bordered table-hover shadow-sm" style="white-space: nowrap">
-                            <thead class="table-dark">
-                                <th scope="col">
-                                    Uang Makan
-                                </th>
-                                <th scope="col">
-                                    Upah Lembur
-                                </th>
-                                <th scope="col">
-                                    Total
-                                </th>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        @if($uang_makan > 0)
-                                        Rp {{number_format($uang_makan, 0, ',','.')}}
-                                        @else
-                                        -
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if(date('G', strtotime($lama_lembur)) <= 5) Rp
-                                            {{number_format($upah_lembur_perjam * date('G', strtotime($lama_lembur)),
-                                            0, ',' ,'.')}} @else - @endif </td>
-                                    <td>
-                                        @if($upah_lembur > 0)
-                                        Rp {{number_format($upah_lembur, 0, ',','.')}}
-                                        @else
-                                        -
-                                        @endif
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <div class="col-7 col-lg-8">
+                    <h6>: Rp 15.000/jam
+                    </h6>
                 </div>
                 @endif
+                @endif
+                <div class="col-5 col-lg-4">
+                    <h6>Status</h6>
+                </div>
+                <div class="col-7 col-lg-8" style="font-size: 14px">
+                    :
+                    @if ($status == 0)
+                    <span class="badge rounded-pill text-bg-warning">proccess</span>
+                    @elseif($status == 1)
+                    <span class="badge rounded-pill text-bg-success">approved</span>
+                    @if ($status_hrd == 0)
+                    <span class="badge rounded-pill text-bg-warning">proccess by HRD</span>
+                    @elseif($status_hrd == 1)
+                    <span class="badge rounded-pill text-bg-success">approved by HRD</span>
+                    @elseif($status_hrd == 2)
+                    <span class="badge rounded-pill text-bg-danger">rejected by HRD</span>
+                    @endif
+                    @elseif($status == 2)
+                    <span class="badge rounded-pill text-bg-danger">rejected</span>
+                    @endif
+                </div>
+                <div class="col-5 col-lg-4">
+                    <h6>Keterangan</h6>
+                </div>
+                <div class="col-7 col-lg-8">
+                    <h6>: {{ $keterangan }}
+                    </h6>
+                </div>
             </div>
-            <div class="modal-footer d-felx justify-content-center">
-                <button type="button" class="btn btn-secondary form-control" data-bs-dismiss="modal"
-                    wire:click='closeView'>Kembali</button>
+            @if(Auth::user()->role_id == 3)
+            <div class="table-responsive mt-3" style="font-size: 14px;">
+                <table class="table table-bordered table-hover shadow-sm" style="white-space: nowrap">
+                    <thead class="table-dark">
+                        <th scope="col">
+                            Uang Makan
+                        </th>
+                        <th scope="col">
+                            Upah Lembur
+                        </th>
+                        <th scope="col">
+                            Total
+                        </th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                @if($uang_makan > 0)
+                                Rp {{number_format($uang_makan, 0, ',','.')}}
+                                @else
+                                -
+                                @endif
+                            </td>
+                            <td>
+                                @if(date('G', strtotime($lama_lembur)) <= 5) Rp {{number_format($upah_lembur_perjam *
+                                    date('G', strtotime($lama_lembur)), 0, ',' ,'.')}} @else - @endif </td>
+                            <td>
+                                @if($upah_lembur > 0)
+                                Rp {{number_format($upah_lembur, 0, ',','.')}}
+                                @else
+                                -
+                                @endif
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
+            @endif
+        </div>
+        <div class="modal-footer d-felx justify-content-center">
+            <button type="button" class="btn btn-secondary form-control" data-bs-dismiss="modal"
+                wire:click='closeView'>Kembali</button>
         </div>
     </div>
+</div>
 </div>
 
 @push('data-lembur')
@@ -147,7 +152,7 @@
             const data=event
             swal.fire({
                 toast: true,
-                position: "top-end",
+                position: "top",
                 icon:data[0]['icon'],
                 title:data[0]['title'],
                 showConfirmButton: false,
@@ -161,7 +166,7 @@
             const data=event
             swal.fire({
                 toast: true,
-                position: "top-end",
+                position: "top",
                 icon:data[0]['icon'],
                 title:data[0]['title'],
                 showConfirmButton: false,
@@ -175,7 +180,7 @@
             const data=event
             swal.fire({
                 toast: true,
-                position: "top-end",
+                position: "top",
                 icon:data[0]['icon'],
                 title:data[0]['title'],
                 showConfirmButton: false,
@@ -190,7 +195,7 @@
             const data=event
             swal.fire({
                 toast: true,
-                position: "top-end",
+                position: "top",
                 icon:data[0]['icon'],
                 title:data[0]['title'],
                 showConfirmButton: false,
@@ -204,7 +209,7 @@
             const data=event
             swal.fire({
                 toast: true,
-                position: "top-end",
+                position: "top",
                 icon:data[0]['icon'],
                 title:data[0]['title'],
                 showConfirmButton: false,
@@ -218,7 +223,7 @@
             const data=event
             swal.fire({
                 toast: true,
-                position: "top-end",
+                position: "top",
                 icon:data[0]['icon'],
                 title:data[0]['title'],
                 showConfirmButton: false,

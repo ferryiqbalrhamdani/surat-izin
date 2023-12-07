@@ -6,17 +6,25 @@
                 <h1 class="mt-4">Data Cuti</h1>
             </div>
             <div class="mt-4">
-                @if(Auth::user()->role_id == 4)
-                @if($countAtasan != NULL)
-                <span class="badge rounded-pill bg-danger">{{
-                    $countAtasan }}</span>
-                @endif
-                @elseif(Auth::user()->role_id == 3)
-                @if($countHrd != NULL)
-                <span class="badge rounded-pill bg-danger">{{
-                    $countHrd }}</span>
-                @endif
-                @endif
+                <a class="btn btn-dark position-relative" data-bs-toggle="tooltip" data-bs-placement="left"
+                    title="Pemberitahuan">
+                    <i class="fa-solid fa-bell"></i>
+                    @if(Auth::user()->role_id == 4)
+                    @if($countAtasan != NULL)
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        {{$countAtasan }}
+                    </span>
+                    @endif
+                    @elseif(Auth::user()->role_id == 3)
+                    @if($countHrd != NULL)
+
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        {{$countHrd }}
+                    </span>
+                    @endif
+                    @endif
+                </a>
+                <span class="badge rounded-pill bg-danger"></span>
             </div>
 
         </div>
@@ -291,5 +299,6 @@
                 </div>
             </div>
         </div>
+        <button class="btn btn-success">tooltip</button>
     </div>
 </div>

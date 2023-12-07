@@ -12,7 +12,7 @@
                     <div class="card shadow-sm">
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-12 col-lg-6 col-md-6 col-sm-6">
+                                <div class="col-12 col-lg-6 col-md-6">
                                     <div class="mb-3">
                                         <label for="keperluan_cuti" class="form-label">Keperluan Cuti
                                             <span class="text-danger"><sup>*</sup></span>

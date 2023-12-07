@@ -80,7 +80,7 @@
                     <div class="col-5 col-lg-4">
                         <h6>Status</h6>
                     </div>
-                    <div class="col-7 col-lg-8" style="font-size: 12px">
+                    <div class="col-7 col-lg-8" style="font-size: 14px">
                         :
                         @if ($status == 0)
                         <span class="badge rounded-pill text-bg-warning">proccess</span>

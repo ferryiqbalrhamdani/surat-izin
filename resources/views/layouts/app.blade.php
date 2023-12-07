@@ -56,7 +56,7 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                             Dashboard
                         </a>
-                        @if (Auth::user()->role_id == 1 || Auth::user()->role_id == 2 || Auth::user()->role_id == 4)
+                        @if (Auth::user()->role_id == 2 || Auth::user()->role_id == 4)
 
                         <div class="sb-sidenav-menu-heading">Data Input</div>
                         <a @if(request()->route()->uri == 'surat-izin' || request()->route()->uri ==
@@ -93,7 +93,7 @@
                         </a>
                         @endif
 
-                        @if (Auth::user()->role_id == 1 || Auth::user()->role_id == 4 || Auth::user()->role_id == 3)
+                        @if (Auth::user()->role_id == 4 || Auth::user()->role_id == 3)
                         <div class="sb-sidenav-menu-heading">Data</div>
                         <a @if(request()->route()->uri == 'data-izin')
                             class="nav-link active"
@@ -165,7 +165,7 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-solid fa-database"></i></div>
                             Data Divisi
                         </a>
-                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                        {{-- <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
                             data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
                             <div class="sb-nav-link-icon"><i class="fas fa-solid fa-gears"></i></div>
                             Data Surat
@@ -178,7 +178,7 @@
                                 <a class="nav-link" href="layout-sidenav-light.html">Surat Izin Cuti</a>
                                 <a class="nav-link" href="layout-sidenav-light.html">Surat Izin Lembur</a>
                             </nav>
-                        </div>
+                        </div> --}}
                         @endif
                     </div>
                 </div>
@@ -196,7 +196,7 @@
             <footer class="py-4 bg-light mt-auto">
                 <div class="container-fluid px-4">
                     <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; Your Website 2023</div>
+                        <div class="text-muted">Copyright &copy; Surat Izin App v.1.2 2023</div>
                         <div>
                             <a href="#">Privacy Policy</a>
                             &middot;
@@ -219,6 +219,11 @@
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"
         crossorigin="anonymous"></script>
     <script src="{{asset('vendor/sb-admin/js/datatables-simple-demo.js')}}"></script>
+    {{-- <script>
+        $(document).ready(function(){
+        $('[data-bs-toggle="tooltip"]').tooltip();
+    });
+    </script> --}}
     @stack('role')
     @stack('pt')
     @stack('divisi')
