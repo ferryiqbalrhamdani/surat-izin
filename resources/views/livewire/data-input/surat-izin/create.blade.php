@@ -84,6 +84,20 @@
 
                                     </div>
                                 </div>
+                                @if($keperluan_izin == 'Izin Tidak Masuk Kerja')
+                                <div class="col-12">
+                                    <div class="mb-3">
+                                        <label for="photo" class="form-label">Bukti Foto
+                                        </label>
+                                        <input type="file" wire:model="photo"
+                                            class="form-control @error('photo') is-invalid @enderror">
+                                        <div wire:loading wire:target="photo">Uploading...</div>
+                                        @error('photo')
+                                        <span class="text-danger">{{$message}}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                @endif
                                 @if($lama_izin == 'Lebih dari sehari')
                                 <div class="col-12  col-lg-6">
                                     <div class="mb-3">

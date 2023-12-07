@@ -14,6 +14,7 @@ class SuratIzin extends Model
     protected $fillable = [
         'user_id',
         'keperluan_izin',
+        'photo',
         'lama_izin',
         'tanggal_izin',
         'sampai_tanggal',

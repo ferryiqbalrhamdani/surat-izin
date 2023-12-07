@@ -12,10 +12,13 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Rule;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class Create extends Component
 {
+    use WithFileUploads;
+
 
     #[Rule('required')]
     public $keperluan_izin;
@@ -32,6 +35,8 @@ class Create extends Component
     public $lama_izin = 'Sehari';
     #[Rule('required')]
     public $sampai_tanggal;
+    #[Rule('image|max:1024', as: 'bukti foto')] // 1MB Max
+    public $photo;
 
     public function mount()
     {
@@ -44,6 +49,7 @@ class Create extends Component
         if ($this->keperluan_izin == 'Izin Datang Terlambat') {
             $v_keperluan_izin = 'required';
             $v_tanggal_izin = 'required';
+            $v_photo = '';
             $v_jam_masuk = 'required';
             $v_jam_keluar = '';
             $v_keterangan = 'required';
@@ -67,9 +73,15 @@ class Create extends Component
                 $v_lama_izin = 'required';
                 $v_sampai_tanggal = 'required|after:' . $this->tanggal_izin;
             }
+            if ($this->photo != NULL) {
+                $v_photo = 'image|max:1024';
+            } else {
+                $v_photo = '';
+            }
         } elseif ($this->keperluan_izin == 'Izin Meninggalkan Kantor') {
             $v_keperluan_izin = 'required';
             $v_tanggal_izin = 'required';
+            $v_photo = '';
             $v_jam_masuk = 'required';
             $v_jam_keluar = 'required';
             $v_keterangan = 'required';
@@ -79,6 +91,7 @@ class Create extends Component
             if ($this->lama_izin == 'Sehari') {
                 $v_keperluan_izin = 'required';
                 $v_tanggal_izin = 'required';
+                $v_photo = '';
                 $v_jam_masuk = 'required';
                 $v_jam_keluar = 'required';
                 $v_keterangan = 'required';
@@ -87,6 +100,7 @@ class Create extends Component
             } else {
                 $v_keperluan_izin = 'required';
                 $v_tanggal_izin = 'required';
+                $v_photo = '';
                 $v_jam_masuk = '';
                 $v_jam_keluar = '';
                 $v_keterangan = 'required';
@@ -96,6 +110,7 @@ class Create extends Component
         } else {
             $v_keperluan_izin = 'required';
             $v_tanggal_izin = 'required';
+            $v_photo = '';
             $v_jam_masuk = 'required';
             $v_jam_keluar = 'required';
             $v_keterangan = 'required';
@@ -111,6 +126,7 @@ class Create extends Component
             'keterangan' => $v_keterangan,
             'lama_izin' => $v_lama_izin,
             'sampai_tanggal' => $v_sampai_tanggal,
+            'photo' => $v_photo,
         ]);
 
         if ($this->keperluan_izin == 'Izin Datang Terlambat') {
@@ -170,6 +186,18 @@ class Create extends Component
                 $lama_izin = (int)$days + 1;
             } else {
                 $lama_izin = (int)$days;
+            }
+
+            if ($this->photo != NULL) {
+                $newName = '';
+
+                $extension = $this->photo->getClientOriginalExtension();
+                $newName = $this->keperluan_izin . '-' . now()->timestamp . '.' . $extension;
+                $this->photo->storeAs('photos', $newName);
+
+                $this->photo = $newName;
+            } else {
+                $this->photo = NULL;
             }
         } elseif ($this->keperluan_izin == 'Izin Meninggalkan Kantor') {
             $keperluan_izin = $this->keperluan_izin;
@@ -247,6 +275,7 @@ class Create extends Component
         SuratIzin::create([
             'user_id' => Auth::user()->id,
             'keperluan_izin' => $keperluan_izin,
+            'photo' => $this->photo,
             'lama_izin' => $this->lama_izin,
             'tanggal_izin' => $tanggal_izin,
             'sampai_tanggal' => $sampai_tanggal,
