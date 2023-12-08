@@ -8,16 +8,20 @@ use DateInterval;
 use DatePeriod;
 use DateTime;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Rule;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 
 class SuratIzin extends Component
 {
     use WithPagination;
+    use WithFileUploads;
+
     protected $paginationTheme = 'bootstrap';
 
     public $perPage = 5;
@@ -29,6 +33,8 @@ class SuratIzin extends Component
         $status,
         $dari,
         $sampai,
+        $jam,
+        $menit,
         $status_hrd;
 
     #[Rule('required')]
@@ -46,6 +52,10 @@ class SuratIzin extends Component
     public $lama_izin = 'Sehari';
     #[Rule('required')]
     public $sampai_tanggal;
+    #[Rule('image|max:2048', as: 'bukti foto')]
+    public $photo;
+
+    public $oldPhoto;
 
     #[Url()]
     public $search = '';
@@ -108,11 +118,26 @@ class SuratIzin extends Component
         } else {
             $this->jam_keluar = '-';
         }
+
+        if ($data->jam_masuk != NULL && $data->jam_keluar != NULL) {
+            $awal = Carbon::parse($data->jam_masuk)->format('H:i');
+            $akhir = Carbon::parse($data->jam_keluar)->format('H:i');
+
+            $jamAwal = explode(':', $awal);
+            $jamAkhir = explode(':', $akhir);
+
+            $jam = $jamAkhir[0] - $jamAwal[0];
+            $menit = $jamAkhir[1] - $jamAwal[1];
+
+            $this->jam = $jam;
+            $this->menit = $menit;
+        }
         $this->keterangan = $data->keterangan_izin;
         $this->lama_izin = $data->lama_izin;
         $this->status = $data->status;
         $this->status_hrd = $data->status_hrd;
-        $this->durasi_izin = $data->durasi_izin . ' hari';
+        $this->durasi_izin = $data->durasi_izin;
+        $this->oldPhoto = $data->photo;
 
 
         $this->dispatch('show-view-modal');
@@ -131,6 +156,9 @@ class SuratIzin extends Component
         $this->durasi_izin = '';
         $this->status = '';
         $this->status_hrd = '';
+        $this->oldPhoto = '';
+        $this->jam = '';
+        $this->menit = '';
     }
 
     // ----------- hapus -----------
@@ -143,7 +171,11 @@ class SuratIzin extends Component
 
     public function destroy()
     {
-        ModelsSuratIzin::where('id', $this->suratIzin_id)->delete();
+        $data = ModelsSuratIzin::findOrFail($this->suratIzin_id);
+        if ($data->photo != NULL) {
+            Storage::delete($data->photo);
+        }
+        $data->delete();
 
         $this->dispatch('close-delete-modal');
         $this->dispatch('delete', [
@@ -178,6 +210,10 @@ class SuratIzin extends Component
         $this->status = $data->status;
         $this->status_hrd = $data->status_hrd;
         $this->durasi_izin = $data->durasi_izin;
+        $this->oldPhoto = $data->photo;
+
+        // dd($this->photo);
+
 
 
         $this->dispatch('show-edit-modal');
@@ -185,9 +221,12 @@ class SuratIzin extends Component
 
     public function edit()
     {
+
+
         if ($this->keperluan_izin == 'Izin Datang Terlambat') {
             $v_keperluan_izin = 'required';
             $v_tanggal_izin = 'required';
+            $v_photo = '';
             $v_jam_masuk = 'required';
             $v_jam_keluar = '';
             $v_keterangan = 'required';
@@ -211,6 +250,12 @@ class SuratIzin extends Component
                 $v_lama_izin = 'required';
                 $v_sampai_tanggal = 'required|after:' . $this->tanggal_izin;
             }
+
+            if ($this->oldPhoto != NULL) {
+                $v_photo = '';
+            } else {
+                $v_photo = 'image|max:2048';
+            }
         } elseif ($this->keperluan_izin == 'Izin Meninggalkan Kantor') {
             $v_keperluan_izin = 'required';
             $v_tanggal_izin = 'required';
@@ -219,7 +264,9 @@ class SuratIzin extends Component
             $v_keterangan = 'required';
             $v_lama_izin = '';
             $v_sampai_tanggal = '';
+            $v_photo = '';
         } elseif ($this->keperluan_izin == 'Tugas Meninggalkan Kantor') {
+            $v_photo = '';
             if ($this->lama_izin == 'Sehari') {
                 $v_keperluan_izin = 'required';
                 $v_tanggal_izin = 'required';
@@ -238,6 +285,7 @@ class SuratIzin extends Component
                 $v_sampai_tanggal = 'required|after:' . $this->tanggal_izin;
             }
         } else {
+            $v_photo = '';
             $v_keperluan_izin = 'required';
             $v_tanggal_izin = 'required';
             $v_jam_masuk = 'required';
@@ -255,7 +303,10 @@ class SuratIzin extends Component
             'keterangan' => $v_keterangan,
             'lama_izin' => $v_lama_izin,
             'sampai_tanggal' => $v_sampai_tanggal,
+            'photo' => $v_photo,
         ]);
+
+        $photo = NULL;
 
         if ($this->keperluan_izin == 'Izin Datang Terlambat') {
             $keperluan_izin = $this->keperluan_izin;
@@ -265,25 +316,44 @@ class SuratIzin extends Component
             $keterangan = $this->keterangan;
             $sampai_tanggal = $this->tanggal_izin;
 
-            $str = date_create($tanggal_izin);
-            $n = date_create($sampai_tanggal);
+            $awal = Carbon::parse($jam_masuk)->format('H:i');
+            $akhir = Carbon::parse($this->jam_keluar)->format('H:i');
 
-            $data = date_diff($str, $n);
-            $diff = $data->d + 1;
+            $jamAwal = explode(':', $awal);
+            $jamAkhir = explode(':', $akhir);
 
-            $lama_izin = $diff;
+            $jam = $jamAkhir[0] - $jamAwal[0];
+            $menit = $jamAkhir[1] - $jamAwal[1];
+
+            if ($jam > 0 && $menit > 0) {
+                $durasi = $jam . ' jam ' . $menit . ' menit';
+            } elseif ($jam > 0 && $menit <= 0) {
+                $durasi = $jam . ' jam';
+            } elseif ($jam <= 0 && $menit > 0) {
+                $durasi = $menit . ' menit';
+            } else {
+                $durasi = '-';
+            }
+
+            $lama_izin = $durasi;
         } elseif ($this->keperluan_izin == 'Izin Tidak Masuk Kerja') {
             $keperluan_izin = $this->keperluan_izin;
             $tanggal_izin = $this->tanggal_izin;
             $jam_masuk = NULL;
             $jam_keluar = NULL;
             $keterangan = $this->keterangan;
-            $sampai_tanggal = $this->sampai_tanggal;
+
+            if ($this->lama_izin == 'Sehari') {
+                $sampai_tanggal = $this->tanggal_izin;
+            } else {
+                $sampai_tanggal = $this->sampai_tanggal;
+            }
 
             $start = new DateTime($tanggal_izin);
             $end = new DateTime($sampai_tanggal);
+
             // otherwise the  end date is excluded (bug?)
-            $end->modify('+1 day');
+            // $end->modify('+1 day');
 
             $interval = $end->diff($start);
 
@@ -310,10 +380,22 @@ class SuratIzin extends Component
                 }
             }
 
-            if ($this->lama_izin == 'Sehari') {
-                $lama_izin = (int)$days + 1;
+            $diff = 1 + (int)$days . ' hari';
+            $durasi = $diff;
+
+
+
+            $lama_izin = $durasi;
+
+            $data = ModelsSuratIzin::findOrFail($this->suratIzin_id);
+            $photo = $data->photo;
+            if ($this->photo) {
+                if ($photo != NULL) {
+                    Storage::delete($data->photo);
+                }
+                $photo = $this->photo->store('public/photos');
             } else {
-                $lama_izin = (int)$days;
+                $photo = $data->photo;
             }
         } elseif ($this->keperluan_izin == 'Izin Meninggalkan Kantor') {
             $keperluan_izin = $this->keperluan_izin;
@@ -323,13 +405,26 @@ class SuratIzin extends Component
             $keterangan = $this->keterangan;
             $sampai_tanggal = $this->tanggal_izin;
 
-            $str = date_create($tanggal_izin);
-            $n = date_create($sampai_tanggal);
+            $awal = Carbon::parse($this->jam_masuk)->format('H:i');
+            $akhir = Carbon::parse($this->jam_keluar)->format('H:i');
 
-            $data = date_diff($str, $n);
-            $diff = $data->d + 1;
+            $jamAwal = explode(':', $awal);
+            $jamAkhir = explode(':', $akhir);
 
-            $lama_izin = $diff;
+            $jam = $jamAkhir[0] - $jamAwal[0];
+            $menit = $jamAkhir[1] - $jamAwal[1];
+
+            if ($jam > 0 && $menit > 0) {
+                $durasi = $jam . ' jam ' . $menit . ' menit';
+            } elseif ($jam > 0 && $menit <= 0) {
+                $durasi = $jam . ' jam';
+            } elseif ($jam <= 0 && $menit > 0) {
+                $durasi = $menit . ' menit';
+            } else {
+                $durasi = '-';
+            }
+
+            $lama_izin = $durasi;
         } elseif ($this->keperluan_izin == 'Tugas Meninggalkan Kantor') {
             if ($this->lama_izin == 'Sehari') {
                 $keperluan_izin = $this->keperluan_izin;
@@ -339,13 +434,26 @@ class SuratIzin extends Component
                 $keterangan = $this->keterangan;
                 $sampai_tanggal = $this->tanggal_izin;
 
-                $str = date_create($tanggal_izin);
-                $n = date_create($sampai_tanggal);
+                $awal = Carbon::parse($this->jam_masuk)->format('H:i');
+                $akhir = Carbon::parse($this->jam_keluar)->format('H:i');
 
-                $data = date_diff($str, $n);
-                $diff = $data->d + 1;
+                $jamAwal = explode(':', $awal);
+                $jamAkhir = explode(':', $akhir);
 
-                $lama_izin = $diff;
+                $jam = $jamAkhir[0] - $jamAwal[0];
+                $menit = $jamAkhir[1] - $jamAwal[1];
+
+                if ($jam > 0 && $menit > 0) {
+                    $durasi = $jam . ' jam ' . $menit . ' menit';
+                } elseif ($jam > 0 && $menit <= 0) {
+                    $durasi = $jam . ' jam';
+                } elseif ($jam <= 0 && $menit > 0) {
+                    $durasi = $menit . ' menit';
+                } else {
+                    $durasi = '-';
+                }
+
+                $lama_izin = $durasi;
             } else {
                 $keperluan_izin = $this->keperluan_izin;
                 $tanggal_izin = $this->tanggal_izin;
@@ -398,6 +506,7 @@ class SuratIzin extends Component
             'jam_masuk' => $jam_masuk,
             'jam_keluar' => $jam_keluar,
             'keterangan_izin' => $keterangan,
+            'photo' => $photo,
         ]);
 
         $this->suratIzin_id = '';
@@ -409,6 +518,8 @@ class SuratIzin extends Component
         $this->keterangan = '';
         $this->lama_izin = '';
         $this->durasi_izin = '';
+        $this->oldPhoto = '';
+        $this->photo = '';
 
         $this->dispatch('close-edit-modal');
         $this->dispatch('update', [
@@ -428,6 +539,8 @@ class SuratIzin extends Component
         $this->keterangan = '';
         $this->lama_izin = '';
         $this->durasi_izin = '';
+        $this->oldPhoto = '';
+        $this->photo = '';
     }
 
     // ---------- reset -----
@@ -440,6 +553,12 @@ class SuratIzin extends Component
         } else {
             $this->lama_izin = $data->lama_izin;
         }
+    }
+
+    // ------------ lihat photo -------------
+    public function lihatPhoto()
+    {
+        $this->dispatch('show-photo-modal');
     }
 
 

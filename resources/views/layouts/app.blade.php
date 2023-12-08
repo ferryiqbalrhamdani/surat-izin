@@ -71,6 +71,7 @@
                             </div>
                             Surat Izin
                         </a>
+                        @if (Auth::user()->employee_status == 'Tetap')
                         <a @if(request()->route()->uri == 'izin-cuti' || request()->route()->uri ==
                             'izin-cuti/tambah-data')
                             class="nav-link active"
@@ -81,6 +82,7 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-solid fa-envelope-open-text"></i></div>
                             Izin Cuti
                         </a>
+                        @endif
                         <a @if(request()->route()->uri == 'izin-lembur' || request()->route()->uri ==
                             'izin-lembur/tambah-data')
                             class="nav-link active"
@@ -197,11 +199,7 @@
                 <div class="container-fluid px-4">
                     <div class="d-flex align-items-center justify-content-between small">
                         <div class="text-muted">Copyright &copy; Surat Izin App v.1.2 2023</div>
-                        <div>
-                            <a href="#">Privacy Policy</a>
-                            &middot;
-                            <a href="#">Terms &amp; Conditions</a>
-                        </div>
+
                     </div>
                 </div>
             </footer>

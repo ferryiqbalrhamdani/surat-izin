@@ -144,7 +144,9 @@
                                                 {{date('Y-m-d', strtotime($si->tanggal_izin)) }}
                                             </td>
                                             <td>
-                                                {{$si->durasi_izin}} hari
+                                                {{$si->durasi_izin}}
+
+
                                             </td>
                                             <td>
                                                 @if($si->jam_masuk != null)

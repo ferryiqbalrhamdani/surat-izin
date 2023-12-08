@@ -6,6 +6,7 @@
                 <h1 class="mt-4">Data Izin</h1>
             </div>
             <div class="mt-4">
+                <button class="btn btn-dark"><i class="fa-solid fa-download"></i> download</button>
                 <a class="btn btn-dark position-relative" data-bs-toggle="tooltip" data-bs-placement="left"
                     title="Pemberitahuan">
                     <i class="fa-solid fa-bell"></i>
@@ -182,7 +183,7 @@
                                                 {{date('Y-m-d', strtotime($di->tanggal_izin)) }}
                                             </td>
                                             <td>
-                                                {{$di->durasi_izin}} hari
+                                                {{$di->durasi_izin}}
                                             </td>
                                             <td>
                                                 @if($di->jam_masuk != null)
@@ -264,7 +265,7 @@
                                                 {{date('Y-m-d', strtotime($dih->tanggal_izin)) }}
                                             </td>
                                             <td>
-                                                {{$dih->durasi_izin}} hari
+                                                {{$dih->durasi_izin}}
                                             </td>
                                             <td>
                                                 @if($dih->jam_masuk != null)

@@ -299,6 +299,5 @@
                 </div>
             </div>
         </div>
-        <button class="btn btn-success">tooltip</button>
     </div>
 </div>

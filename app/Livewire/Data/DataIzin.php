@@ -24,6 +24,10 @@ class DataIzin extends Component
 
     public $sampai,
         $dari,
+        $jam,
+        $menit,
+        $oldPhoto,
+        $photo,
         $keperluan_izin,
         $tanggal_izin,
         $sampai_tanggal,
@@ -90,11 +94,27 @@ class DataIzin extends Component
         } else {
             $this->jam_keluar = '-';
         }
+
+        if ($data->jam_masuk != NULL && $data->jam_keluar != NULL) {
+            $awal = Carbon::parse($data->jam_masuk)->format('H:i');
+            $akhir = Carbon::parse($data->jam_keluar)->format('H:i');
+
+            $jamAwal = explode(':', $awal);
+            $jamAkhir = explode(':', $akhir);
+
+            $jam = $jamAkhir[0] - $jamAwal[0];
+            $menit = $jamAkhir[1] - $jamAwal[1];
+
+            $this->jam = $jam;
+            $this->menit = $menit;
+        }
         $this->keterangan = $data->keterangan_izin;
         $this->lama_izin = $data->lama_izin;
         $this->status = $data->status;
         $this->status_hrd = $data->status_hrd;
-        $this->durasi_izin = $data->durasi_izin . ' hari';
+        $this->durasi_izin = $data->durasi_izin;
+        $this->oldPhoto = $data->photo;
+
 
 
         $this->dispatch('show-view-modal');
@@ -113,6 +133,7 @@ class DataIzin extends Component
         $this->durasi_izin = '';
         $this->status = '';
         $this->status_hrd = '';
+        $this->photo = '';
     }
 
     // ------------ approve atasan ------------
@@ -220,6 +241,13 @@ class DataIzin extends Component
             'icon' => 'success',
         ]);
     }
+
+    // ------------ lihat photo -------------
+    public function lihatPhoto()
+    {
+        $this->dispatch('show-photo-modal');
+    }
+
 
     #[Title('Data Izin')]
     #[Layout('layouts.app')]

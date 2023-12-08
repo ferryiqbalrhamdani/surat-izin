@@ -84,20 +84,7 @@
 
                                     </div>
                                 </div>
-                                @if($keperluan_izin == 'Izin Tidak Masuk Kerja')
-                                <div class="col-12">
-                                    <div class="mb-3">
-                                        <label for="photo" class="form-label">Bukti Foto
-                                        </label>
-                                        <input type="file" wire:model="photo"
-                                            class="form-control @error('photo') is-invalid @enderror">
-                                        <div wire:loading wire:target="photo">Uploading...</div>
-                                        @error('photo')
-                                        <span class="text-danger">{{$message}}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                @endif
+
                                 @if($lama_izin == 'Lebih dari sehari')
                                 <div class="col-12  col-lg-6">
                                     <div class="mb-3">
@@ -111,6 +98,30 @@
                                         <span class="text-danger">{{$message}}</span>
                                         @enderror
 
+                                    </div>
+                                </div>
+                                @endif
+                                @if($keperluan_izin == 'Izin Tidak Masuk Kerja')
+                                <div class="col-12">
+                                    <div class="mb-3">
+                                        <label for="photo" class="form-label">Bukti Foto
+                                        </label>
+                                        <input type="file" wire:model="photo"
+                                            class="form-control @error('photo') is-invalid @enderror">
+                                        <div wire:loading wire:target="photo">Uploading...</div>
+                                        @error('photo')
+                                        <span class="text-danger">{{$message}}</span>
+                                        @enderror
+                                        @if($photo != NULL)
+                                        <div class="card shadow-sm mt-3">
+                                            <div class="card-header text-center">
+                                                <label for="oldPhoto" class="form-label">Upload Foto</label>
+                                            </div>
+                                            <div class="card-body text-center">
+                                                <img src="{{ $photo->temporaryUrl() }}" style="max-width: 300px">
+                                            </div>
+                                        </div>
+                                        @endif
                                     </div>
                                 </div>
                                 @endif

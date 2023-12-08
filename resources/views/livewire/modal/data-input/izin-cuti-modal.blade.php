@@ -69,22 +69,25 @@
                     <div class="col-5 col-lg-4">
                         <h6>Status</h6>
                     </div>
-                    <div class="col-7 col-lg-8" style="font-size: 14px">
-                        :
-                        @if ($status == 0)
-                        <span class="badge rounded-pill text-bg-warning">proccess</span>
-                        @elseif($status == 1)
-                        <span class="badge rounded-pill text-bg-success">approved</span>
-                        @if ($status_hrd == 0)
-                        <span class="badge rounded-pill text-bg-warning">proccess by HRD</span>
-                        @elseif($status_hrd == 1)
-                        <span class="badge rounded-pill text-bg-success">approved by HRD</span>
-                        @elseif($status_hrd == 2)
-                        <span class="badge rounded-pill text-bg-danger">rejected by HRD</span>
-                        @endif
-                        @elseif($status == 2)
-                        <span class="badge rounded-pill text-bg-danger">rejected</span>
-                        @endif
+                    <div class="col-7 col-lg-8">
+                        <h6>
+                            :
+                            @if ($status == 0)
+                            <span class="badge rounded-pill text-bg-warning">proccess</span>
+                            @elseif($status == 1)
+                            <span class="badge rounded-pill text-bg-success">approved</span>
+                            @if ($status_hrd == 0)
+                            <span class="badge rounded-pill text-bg-warning">proccess by HRD</span>
+                            @elseif($status_hrd == 1)
+                            <span class="badge rounded-pill text-bg-success">approved by HRD</span>
+                            @elseif($status_hrd == 2)
+                            <span class="badge rounded-pill text-bg-danger">rejected by HRD</span>
+                            @endif
+                            @elseif($status == 2)
+                            <span class="badge rounded-pill text-bg-danger">rejected</span>
+                            @endif
+
+                        </h6>
                     </div>
                     <div class="col-5 col-lg-4">
                         <h6>Keterangan</h6>

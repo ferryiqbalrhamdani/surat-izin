@@ -75,11 +75,11 @@
                                             <option value="Bencana Alam">Bencana Alam</option>
                                             <option value="Menikah">Menikah</option>
                                             <option value="Keluarga Inti">Keluarga Inti</option>
-                                            {{-- @if(Auth::user()->jk == 'L') --}}
+                                            @if(Auth::user()->jk == 'L')
                                             <option value="Istri Melahirkan">Istri Melahirkan</option>
-                                            {{-- @elseif(Auth::user()->jk == 'P') --}}
+                                            @elseif(Auth::user()->jk == 'P')
                                             <option value="Cuti Melahirkan">Cuti Melahirkan</option>
-                                            {{-- @endif --}}
+                                            @endif
                                         </select>
                                         @error('pilihan')
                                         <span class="text-danger">{{$message}}</span>

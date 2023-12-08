@@ -35,12 +35,11 @@ class Create extends Component
     public $lama_izin = 'Sehari';
     #[Rule('required')]
     public $sampai_tanggal;
-    #[Rule('image|max:1024', as: 'bukti foto')] // 1MB Max
+    #[Rule('image|max:2048', as: 'bukti foto')] // 1MB Max
     public $photo;
 
     public function mount()
     {
-        // $this->tanggal_izin = Carbon::now()->format('Y-m-d');
     }
 
 
@@ -74,7 +73,7 @@ class Create extends Component
                 $v_sampai_tanggal = 'required|after:' . $this->tanggal_izin;
             }
             if ($this->photo != NULL) {
-                $v_photo = 'image|max:1024';
+                $v_photo = 'image|max:2048';
             } else {
                 $v_photo = '';
             }
@@ -137,25 +136,44 @@ class Create extends Component
             $keterangan = $this->keterangan;
             $sampai_tanggal = $this->tanggal_izin;
 
-            $str = date_create($tanggal_izin);
-            $n = date_create($sampai_tanggal);
+            $awal = Carbon::parse($jam_masuk)->format('H:i');
+            $akhir = Carbon::parse($this->jam_keluar)->format('H:i');
 
-            $data = date_diff($str, $n);
-            $diff = $data->d + 1;
+            $jamAwal = explode(':', $awal);
+            $jamAkhir = explode(':', $akhir);
 
-            $lama_izin = $diff;
+            $jam = $jamAkhir[0] - $jamAwal[0];
+            $menit = $jamAkhir[1] - $jamAwal[1];
+
+            if ($jam > 0 && $menit > 0) {
+                $durasi = $jam . ' jam ' . $menit . ' menit';
+            } elseif ($jam > 0 && $menit <= 0) {
+                $durasi = $jam . ' jam';
+            } elseif ($jam <= 0 && $menit > 0) {
+                $durasi = $menit . ' menit';
+            } else {
+                $durasi = '-';
+            }
+
+            $lama_izin = $durasi;
         } elseif ($this->keperluan_izin == 'Izin Tidak Masuk Kerja') {
             $keperluan_izin = $this->keperluan_izin;
             $tanggal_izin = $this->tanggal_izin;
             $jam_masuk = NULL;
             $jam_keluar = NULL;
             $keterangan = $this->keterangan;
-            $sampai_tanggal = $this->sampai_tanggal;
+
+            if ($this->lama_izin == 'Sehari') {
+                $sampai_tanggal = $this->tanggal_izin;
+            } else {
+                $sampai_tanggal = $this->sampai_tanggal;
+            }
 
             $start = new DateTime($tanggal_izin);
             $end = new DateTime($sampai_tanggal);
+
             // otherwise the  end date is excluded (bug?)
-            $end->modify('+1 day');
+            // $end->modify('+1 day');
 
             $interval = $end->diff($start);
 
@@ -182,20 +200,17 @@ class Create extends Component
                 }
             }
 
-            if ($this->lama_izin == 'Sehari') {
-                $lama_izin = (int)$days + 1;
-            } else {
-                $lama_izin = (int)$days;
-            }
+            $diff = 1 + (int)$days . ' hari';
+            $durasi = $diff;
+
+
+
+            $lama_izin = $durasi;
 
             if ($this->photo != NULL) {
-                $newName = '';
 
-                $extension = $this->photo->getClientOriginalExtension();
-                $newName = $this->keperluan_izin . '-' . now()->timestamp . '.' . $extension;
-                $this->photo->storeAs('photos', $newName);
 
-                $this->photo = $newName;
+                $this->photo = $this->photo->store('public/photos');
             } else {
                 $this->photo = NULL;
             }
@@ -207,13 +222,26 @@ class Create extends Component
             $keterangan = $this->keterangan;
             $sampai_tanggal = $this->tanggal_izin;
 
-            $str = date_create($tanggal_izin);
-            $n = date_create($sampai_tanggal);
+            $awal = Carbon::parse($this->jam_masuk)->format('H:i');
+            $akhir = Carbon::parse($this->jam_keluar)->format('H:i');
 
-            $data = date_diff($str, $n);
-            $diff = $data->d + 1;
+            $jamAwal = explode(':', $awal);
+            $jamAkhir = explode(':', $akhir);
 
-            $lama_izin = $diff;
+            $jam = $jamAkhir[0] - $jamAwal[0];
+            $menit = $jamAkhir[1] - $jamAwal[1];
+
+            if ($jam > 0 && $menit > 0) {
+                $durasi = $jam . ' jam ' . $menit . ' menit';
+            } elseif ($jam > 0 && $menit <= 0) {
+                $durasi = $jam . ' jam';
+            } elseif ($jam <= 0 && $menit > 0) {
+                $durasi = $menit . ' menit';
+            } else {
+                $durasi = '-';
+            }
+
+            $lama_izin = $durasi;
         } elseif ($this->keperluan_izin == 'Tugas Meninggalkan Kantor') {
             if ($this->lama_izin == 'Sehari') {
                 $keperluan_izin = $this->keperluan_izin;
@@ -223,13 +251,26 @@ class Create extends Component
                 $keterangan = $this->keterangan;
                 $sampai_tanggal = $this->tanggal_izin;
 
-                $str = date_create($tanggal_izin);
-                $n = date_create($sampai_tanggal);
+                $awal = Carbon::parse($this->jam_masuk)->format('H:i');
+                $akhir = Carbon::parse($this->jam_keluar)->format('H:i');
 
-                $data = date_diff($str, $n);
-                $diff = $data->d + 1;
+                $jamAwal = explode(':', $awal);
+                $jamAkhir = explode(':', $akhir);
 
-                $lama_izin = $diff;
+                $jam = $jamAkhir[0] - $jamAwal[0];
+                $menit = $jamAkhir[1] - $jamAwal[1];
+
+                if ($jam > 0 && $menit > 0) {
+                    $durasi = $jam . ' jam ' . $menit . ' menit';
+                } elseif ($jam > 0 && $menit <= 0) {
+                    $durasi = $jam . ' jam';
+                } elseif ($jam <= 0 && $menit > 0) {
+                    $durasi = $menit . ' menit';
+                } else {
+                    $durasi = '-';
+                }
+
+                $lama_izin = $durasi;
             } else {
                 $keperluan_izin = $this->keperluan_izin;
                 $tanggal_izin = $this->tanggal_izin;
@@ -268,7 +309,7 @@ class Create extends Component
                     }
                 }
 
-                $lama_izin = (int)$days;
+                $lama_izin = (int)$days . ' hari';
             }
         }
 
