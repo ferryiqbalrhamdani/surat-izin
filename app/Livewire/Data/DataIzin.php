@@ -4,7 +4,9 @@ namespace App\Livewire\Data;
 
 use App\Models\SuratIzin;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Rule;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -14,6 +16,7 @@ class DataIzin extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
+    protected $listeners = ['resetMySelected' => 'resetSelected'];
 
     public $perPage = 5;
     public $sortField = 'created_at';
@@ -40,6 +43,19 @@ class DataIzin extends Component
         $nama,
         $durasi_izin,
         $izin_id;
+
+    public $mySelected = [];
+    public $selectAll = false;
+    public $firstId = NULL;
+    public $lastId = NULL;
+
+
+    #[Rule('required|date', as: 'dari tanggal')]
+    public $dari_tanggal_download;
+    #[Rule('required|date|after:dari_tanggal_download', as: 'sampai tanggal')]
+    public $sampai_tanggal_download;
+    #[Rule('required|string', as: 'format data')]
+    public $format_data;
 
     public function mount()
     {
@@ -248,27 +264,224 @@ class DataIzin extends Component
         $this->dispatch('show-photo-modal');
     }
 
+    // ----------- download data ---------------
+    public function downloadData()
+    {
+        $this->validate();
+        dd('ok');
+    }
+
+    // -------- bulk ---------------------------
+
+    public function resetSelected()
+    {
+        $this->mySelected = [];
+        $this->selectAll = false;
+    }
+
+    public function updatedMySelected()
+    {
+        // dd($value);
+        $data = SuratIzin::select('tb_izin.*', 'users.name')
+            ->where('tb_izin.status', 1)
+            ->where('users.name', 'like', '%' . $this->search . '%')
+            ->whereBetween('tb_izin.tanggal_izin', [$this->dari, $this->sampai])
+            ->join('users', 'users.id', '=', 'tb_izin.user_id')
+            ->orderBy($this->sortField, $this->sortDirection)
+            ->paginate($this->perPage);
+
+        if (count($this->mySelected) == $data->count() || count($this->mySelected) == $this->perPage) {
+            $this->selectAll = true;
+        } else {
+            $this->selectAll = false;
+        }
+    }
+
+    public function updatedSelectAll($value)
+    {
+        if ($value) {
+            $this->mySelected = SuratIzin::whereBetween('id', [$this->firstId, $this->lastId])->pluck('id');
+        } else {
+            $this->mySelected = [];
+        }
+    }
+
+    // -------- bulk HRD---------------------------
+    public function approveSelected()
+    {
+        SuratIzin::whereIn('id', $this->mySelected)->update([
+            'status_hrd' => 1,
+        ]);
+
+        $this->mySelected = [];
+        $this->selectAll = false;
+
+        $this->dispatch('approveHrd', [
+            'title' => 'Data Berhasil di approve!',
+            'icon' => 'success',
+        ]);
+    }
+
+    public function rejectSelected()
+    {
+        SuratIzin::whereIn('id', $this->mySelected)->update([
+            'status_hrd' => 2,
+        ]);
+
+        $this->mySelected = [];
+        $this->selectAll = false;
+
+        $this->dispatch('rejectHrd', [
+            'title' => 'Data Berhasil di reject!',
+            'icon' => 'success',
+        ]);
+    }
+
+    public function resetDataSelected()
+    {
+        SuratIzin::whereIn('id', $this->mySelected)->update([
+            'status_hrd' => 0,
+        ]);
+
+        $this->mySelected = [];
+        $this->selectAll = false;
+
+        $this->dispatch('resetHrd', [
+            'title' => 'Data Berhasil di reset!',
+            'icon' => 'success',
+        ]);
+    }
+
+    // --------------- bulk atasan ----------------
+    public function approveSelectedAtasan()
+    {
+        $data = SuratIzin::whereIn('id', $this->mySelected)->where('status_hrd', '>', 0)->pluck('status_hrd');
+
+
+        if ($data->count() == 0) {
+            SuratIzin::whereIn('id', $this->mySelected)->update([
+                'status' => 1,
+                'status_hrd' => 0,
+            ]);
+
+            $this->mySelected = [];
+            $this->selectAll = false;
+
+            $this->dispatch('approveHrd', [
+                'title' => 'Data Berhasil di approve!',
+                'icon' => 'success',
+            ]);
+        } elseif ($data->count() > 0) {
+            $this->mySelected = [];
+            $this->selectAll = false;
+
+            $this->dispatch('notAllowed', [
+                'title' => 'Data tidak bisa diproses!',
+                'icon' => 'warning',
+            ]);
+        }
+    }
+
+    public function rejectSelectedAtasan()
+    {
+        $data = SuratIzin::whereIn('id', $this->mySelected)->where('status_hrd', '>', 0)->pluck('status_hrd');
+
+
+        if ($data->count() == 0) {
+            SuratIzin::whereIn('id', $this->mySelected)->update([
+                'status' => 2,
+                'status_hrd' => NULL,
+            ]);
+
+            $this->mySelected = [];
+            $this->selectAll = false;
+
+            $this->dispatch('rejectHrd', [
+                'title' => 'Data Berhasil di reject!',
+                'icon' => 'success',
+            ]);
+        } elseif ($data->count() > 0) {
+            $this->mySelected = [];
+            $this->selectAll = false;
+
+            $this->dispatch('notAllowed', [
+                'title' => 'Data tidak bisa diproses!',
+                'icon' => 'warning',
+            ]);
+        }
+    }
+
+    public function resetDataSelectedAtasan()
+    {
+        $data = SuratIzin::whereIn('id', $this->mySelected)->where('status_hrd', '>', 0)->pluck('status_hrd');
+
+
+        if ($data->count() == 0) {
+            SuratIzin::whereIn('id', $this->mySelected)->update([
+                'status' => 0,
+                'status_hrd' => NULL,
+            ]);
+
+            $this->mySelected = [];
+            $this->selectAll = false;
+
+            $this->dispatch('resetHrd', [
+                'title' => 'Data Berhasil di reset!',
+                'icon' => 'success',
+            ]);
+        } elseif ($data->count() > 0) {
+            $this->mySelected = [];
+            $this->selectAll = false;
+
+            $this->dispatch('notAllowed', [
+                'title' => 'Data tidak bisa diproses!',
+                'icon' => 'warning',
+            ]);
+        }
+    }
+
 
     #[Title('Data Izin')]
     #[Layout('layouts.app')]
     public function render()
     {
+        $dataIzinHrd = SuratIzin::select('tb_izin.*', 'users.name')
+            ->where('tb_izin.status', 1)
+            ->where('users.name', 'like', '%' . $this->search . '%')
+            ->whereBetween('tb_izin.tanggal_izin', [$this->dari, $this->sampai])
+            ->join('users', 'users.id', '=', 'tb_izin.user_id')
+            ->orderBy($this->sortField, $this->sortDirection)
+            ->paginate($this->perPage);
+
+
+
+        $dataIzin =  SuratIzin::select('tb_izin.*', 'users.name')
+            ->where('users.name', 'like', '%' . $this->search . '%')
+            ->whereBetween('tb_izin.tanggal_izin', [$this->dari, $this->sampai])
+            ->join('users', 'users.id', '=', 'tb_izin.user_id')
+            ->orderBy($this->sortField, $this->sortDirection)
+            ->paginate($this->perPage);
+
+
+        if (Auth::user()->role_id == 3) {
+            $data = $dataIzinHrd->count();
+            if ($data > 0) {
+                $this->firstId = $dataIzinHrd[$data - 1]->id;
+                $this->lastId = $dataIzinHrd[0]->id;
+            }
+        } elseif (Auth::user()->role_id == 4) {
+            $data = $dataIzin->count();
+            if ($data > 0) {
+                $this->firstId = $dataIzin[$data - 1]->id;
+                $this->lastId = $dataIzin[0]->id;
+            }
+        }
+
         return view('livewire.data.data-izin', [
-            'dataIzin' => SuratIzin::select('tb_izin.*', 'users.name')
-                ->where('users.name', 'like', '%' . $this->search . '%')
-                ->whereBetween('tb_izin.tanggal_izin', [$this->dari, $this->sampai])
-                ->join('users', 'users.id', '=', 'tb_izin.user_id')
-                ->orderBy($this->sortField, $this->sortDirection)
-                ->paginate($this->perPage),
+            'dataIzin' => $dataIzin,
             'countAtasan' => SuratIzin::where('status', 0)->count(),
 
-            'dataIzinHrd' => SuratIzin::select('tb_izin.*', 'users.name')
-                ->where('tb_izin.status', 1)
-                ->where('users.name', 'like', '%' . $this->search . '%')
-                ->whereBetween('tb_izin.tanggal_izin', [$this->dari, $this->sampai])
-                ->join('users', 'users.id', '=', 'tb_izin.user_id')
-                ->orderBy($this->sortField, $this->sortDirection)
-                ->paginate($this->perPage),
+            'dataIzinHrd' => $dataIzinHrd,
             'countHrd' => SuratIzin::where('status_hrd', 0)->count(),
         ]);
     }

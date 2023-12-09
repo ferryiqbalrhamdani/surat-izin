@@ -4,6 +4,7 @@ namespace App\Livewire\Data;
 
 use App\Models\Cuti;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
@@ -34,6 +35,11 @@ class DataCuti extends Component
         $keterangan_cuti,
         $pilihan,
         $nama;
+
+    public $mySelected = [];
+    public $selectAll = false;
+    public $firstId = NULL;
+    public $lastId = NULL;
 
     public function mount()
     {
@@ -208,26 +214,229 @@ class DataCuti extends Component
         ]);
     }
 
+    // -------- bulk ---------------------------
+
+    public function resetSelected()
+    {
+        $this->mySelected = [];
+        $this->selectAll = false;
+    }
+
+    public function updatedMySelected()
+    {
+
+        $data = Cuti::select('tb_cuti.*', 'users.name')
+            ->where('users.name', 'like', '%' . $this->search . '%')
+            ->whereBetween('tb_cuti.tanggal_cuti', [$this->dari, $this->sampai])
+            ->join('users', 'users.id', '=', 'tb_cuti.user_id')
+            ->orderBy($this->sortField, $this->sortDirection)
+            ->paginate($this->perPage);
+
+        $dataHrd = Cuti::select('tb_cuti.*', 'users.name')
+            ->where('tb_cuti.status', 1)
+            ->where('users.name', 'like', '%' . $this->search . '%')
+            ->whereBetween('tb_cuti.tanggal_cuti', [$this->dari, $this->sampai])
+            ->join('users', 'users.id', '=', 'tb_cuti.user_id')
+            ->orderBy($this->sortField, $this->sortDirection)
+            ->paginate($this->perPage);
+
+        if (Auth::user()->role_id == 4) {
+            if (count($this->mySelected) == $data->count()) {
+                $this->selectAll = true;
+            } else {
+                $this->selectAll = false;
+            }
+        } elseif (Auth::user()->role_id == 3) {
+            if (count($this->mySelected) == $dataHrd->count()) {
+                $this->selectAll = true;
+            } else {
+                $this->selectAll = false;
+            }
+        }
+    }
+
+    public function updatedSelectAll($value)
+    {
+        if ($value) {
+            $this->mySelected = Cuti::whereBetween('id', [$this->firstId, $this->lastId])->pluck('id');
+        } else {
+            $this->mySelected = [];
+        }
+    }
+
+    // -------- bulk HRD---------------------------
+    public function approveSelected()
+    {
+        Cuti::whereIn('id', $this->mySelected)->update([
+            'status_hrd' => 1,
+        ]);
+
+        $this->mySelected = [];
+        $this->selectAll = false;
+
+        $this->dispatch('approveHrd', [
+            'title' => 'Data Berhasil di approve!',
+            'icon' => 'success',
+        ]);
+    }
+
+    public function rejectSelected()
+    {
+        Cuti::whereIn('id', $this->mySelected)->update([
+            'status_hrd' => 2,
+        ]);
+
+        $this->mySelected = [];
+        $this->selectAll = false;
+
+        $this->dispatch('rejectHrd', [
+            'title' => 'Data Berhasil di reject!',
+            'icon' => 'success',
+        ]);
+    }
+
+    public function resetDataSelected()
+    {
+        Cuti::whereIn('id', $this->mySelected)->update([
+            'status_hrd' => 0,
+        ]);
+
+        $this->mySelected = [];
+        $this->selectAll = false;
+
+        $this->dispatch('resetHrd', [
+            'title' => 'Data Berhasil di reset!',
+            'icon' => 'success',
+        ]);
+    }
+
+    // --------------- bulk atasan ----------------
+    public function approveSelectedAtasan()
+    {
+        $data = Cuti::whereIn('id', $this->mySelected)->where('status_hrd', '>', 0)->pluck('status_hrd');
+
+
+        if ($data->count() == 0) {
+            Cuti::whereIn('id', $this->mySelected)->update([
+                'status' => 1,
+                'status_hrd' => 0,
+            ]);
+
+            $this->mySelected = [];
+            $this->selectAll = false;
+
+            $this->dispatch('approveHrd', [
+                'title' => 'Data Berhasil di approve!',
+                'icon' => 'success',
+            ]);
+        } elseif ($data->count() > 0) {
+            $this->mySelected = [];
+            $this->selectAll = false;
+
+            $this->dispatch('notAllowed', [
+                'title' => 'Data tidak bisa diproses!',
+                'icon' => 'warning',
+            ]);
+        }
+    }
+
+    public function rejectSelectedAtasan()
+    {
+        $data = Cuti::whereIn('id', $this->mySelected)->where('status_hrd', '>', 0)->pluck('status_hrd');
+
+
+        if ($data->count() == 0) {
+            Cuti::whereIn('id', $this->mySelected)->update([
+                'status' => 2,
+                'status_hrd' => NULL,
+            ]);
+
+            $this->mySelected = [];
+            $this->selectAll = false;
+
+            $this->dispatch('rejectHrd', [
+                'title' => 'Data Berhasil di reject!',
+                'icon' => 'success',
+            ]);
+        } elseif ($data->count() > 0) {
+            $this->mySelected = [];
+            $this->selectAll = false;
+
+            $this->dispatch('notAllowed', [
+                'title' => 'Data tidak bisa diproses!',
+                'icon' => 'warning',
+            ]);
+        }
+    }
+
+    public function resetDataSelectedAtasan()
+    {
+        $data = Cuti::whereIn('id', $this->mySelected)->where('status_hrd', '>', 0)->pluck('status_hrd');
+
+
+        if ($data->count() == 0) {
+            Cuti::whereIn('id', $this->mySelected)->update([
+                'status' => 0,
+                'status_hrd' => NULL,
+            ]);
+
+            $this->mySelected = [];
+            $this->selectAll = false;
+
+            $this->dispatch('resetHrd', [
+                'title' => 'Data Berhasil di reset!',
+                'icon' => 'success',
+            ]);
+        } elseif ($data->count() > 0) {
+            $this->mySelected = [];
+            $this->selectAll = false;
+
+            $this->dispatch('notAllowed', [
+                'title' => 'Data tidak bisa diproses!',
+                'icon' => 'warning',
+            ]);
+        }
+    }
+
     #[Title('Data Cuti')]
     #[Layout('layouts.app')]
     public function render()
     {
+        $dataCuti = Cuti::select('tb_cuti.*', 'users.name')
+            ->where('users.name', 'like', '%' . $this->search . '%')
+            ->whereBetween('tb_cuti.tanggal_cuti', [$this->dari, $this->sampai])
+            ->join('users', 'users.id', '=', 'tb_cuti.user_id')
+            ->orderBy($this->sortField, $this->sortDirection)
+            ->paginate($this->perPage);
+
+        $dataCutiHrd = Cuti::select('tb_cuti.*', 'users.name')
+            ->where('tb_cuti.status', 1)
+            ->where('users.name', 'like', '%' . $this->search . '%')
+            ->whereBetween('tb_cuti.tanggal_cuti', [$this->dari, $this->sampai])
+            ->join('users', 'users.id', '=', 'tb_cuti.user_id')
+            ->orderBy($this->sortField, $this->sortDirection)
+            ->paginate($this->perPage);
+
+
+        if (Auth::user()->role_id == 3) {
+            $data = $dataCutiHrd->count();
+            if ($data > 0) {
+                $this->firstId = $dataCutiHrd[$data - 1]->id;
+                $this->lastId = $dataCutiHrd[0]->id;
+            }
+        } elseif (Auth::user()->role_id == 4) {
+            $data = $dataCuti->count();
+            if ($data > 0) {
+                $this->firstId = $dataCuti[$data - 1]->id;
+                $this->lastId = $dataCuti[0]->id;
+            }
+        }
+
         return view('livewire.data.data-cuti', [
-            'dataCuti' => Cuti::select('tb_cuti.*', 'users.name')
-                ->where('users.name', 'like', '%' . $this->search . '%')
-                ->whereBetween('tb_cuti.tanggal_cuti', [$this->dari, $this->sampai])
-                ->join('users', 'users.id', '=', 'tb_cuti.user_id')
-                ->orderBy($this->sortField, $this->sortDirection)
-                ->paginate($this->perPage),
+            'dataCuti' => $dataCuti,
             'countAtasan' => Cuti::where('status', 0)->count(),
 
-            'dataCutiHrd' => Cuti::select('tb_cuti.*', 'users.name')
-                ->where('tb_cuti.status', 1)
-                ->where('users.name', 'like', '%' . $this->search . '%')
-                ->whereBetween('tb_cuti.tanggal_cuti', [$this->dari, $this->sampai])
-                ->join('users', 'users.id', '=', 'tb_cuti.user_id')
-                ->orderBy($this->sortField, $this->sortDirection)
-                ->paginate($this->perPage),
+            'dataCutiHrd' => $dataCutiHrd,
             'countHrd' => Cuti::where('status_hrd', 0)->count(),
         ]);
     }

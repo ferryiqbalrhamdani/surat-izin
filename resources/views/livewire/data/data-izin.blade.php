@@ -6,7 +6,10 @@
                 <h1 class="mt-4">Data Izin</h1>
             </div>
             <div class="mt-4">
-                <button class="btn btn-dark"><i class="fa-solid fa-download"></i> download</button>
+                @if (Auth::user()->role_id == 3)
+                <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><i
+                        class="fa-solid fa-download"></i> download</button>
+                @endif
                 <a class="btn btn-dark position-relative" data-bs-toggle="tooltip" data-bs-placement="left"
                     title="Pemberitahuan">
                     <i class="fa-solid fa-bell"></i>
@@ -87,10 +90,73 @@
                                     </div>
                                 </div>
                             </div>
+
+
+
+                            <div class="mb-3">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-dark btn-dark dropdown-toggle"
+                                        data-bs-toggle="dropdown" aria-expanded="false" @if ($mySelected==NULL) disabled
+                                        @endif>
+                                        Action
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        @if(Auth::user()->role_id == 3)
+                                        <li><a style="cursor: pointer" class="dropdown-item text-success"
+                                                wire:click='approveSelected'><i class="fa-solid fa-circle-check"></i>
+                                                Approve</a></li>
+                                        <li><a style="cursor: pointer" class="dropdown-item text-danger"
+                                                wire:click='rejectSelected'><i class="fa-solid fa-circle-xmark"></i>
+                                                Reject</a></li>
+                                        <li><a style="cursor: pointer" class="dropdown-item"
+                                                wire:click='resetDataSelected'><i
+                                                    class="fa-solid fa-arrow-rotate-left"></i> Reset</a></li>
+                                        @elseif(Auth::user()->role_id == 4)
+                                        <li><a style="cursor: pointer" class="dropdown-item text-success"
+                                                wire:click='approveSelectedAtasan'><i
+                                                    class="fa-solid fa-circle-check"></i>
+                                                Approve</a></li>
+                                        <li><a style="cursor: pointer" class="dropdown-item text-danger"
+                                                wire:click='rejectSelectedAtasan'><i
+                                                    class="fa-solid fa-circle-xmark"></i>
+                                                Reject</a></li>
+                                        <li><a style="cursor: pointer" class="dropdown-item"
+                                                wire:click='resetDataSelectedAtasan'><i
+                                                    class="fa-solid fa-arrow-rotate-left"></i> Reset</a></li>
+                                        @endif
+                                    </ul>
+                                </div>
+                                @if($mySelected != NULL)
+
+                                <span> {{count($mySelected)}} data dipilih</span>
+
+                                @endif
+                            </div>
+
+                            {{-- @dump($lastId)
+                            @dump($firstId)
+                            @dump($selectAll)
+                            @dump($mySelected) --}}
+
+
                             <div class="table-responsive">
                                 <table class="table table-bordered table-hover shadow-sm" style="white-space: nowrap">
+
                                     <thead class="table-dark">
                                         <tr>
+                                            <th scope="col" class="text-center">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value=""
+                                                        id="flexCheckDefault" wire:model.live='selectAll'>
+                                                    <input type="text" hidden wire:model.live='firstId' value="
+                                                                @if(Auth::user()->role_id == 3 && $dataIzinHrd->count() > 0) 
+                                                                    {{$dataIzinHrd[0]->id}} 
+                                                                @elseif(Auth::user()->role_id == 4 && $dataIzin->count() > 0) 
+                                                                    {{$dataIzin[0]->id}} 
+                                                                @endif
+                                                            ">
+                                                </div>
+                                            </th>
                                             <th scope="col">
                                                 Nama
                                                 <span wire:click="sortBy('name')"
@@ -173,7 +239,13 @@
                                         @else
                                         @foreach ($dataIzin as $di)
                                         <tr class="">
-                                            <td scope="row">
+                                            <td scope="row" class="text-center">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="{{$di->id}}"
+                                                        wire:model.live='mySelected'>
+                                                </div>
+                                            </td>
+                                            <td>
                                                 {{$di->name}}
                                             </td>
                                             <td>
@@ -255,7 +327,13 @@
                                         @else
                                         @foreach ($dataIzinHrd as $dih)
                                         <tr class="">
-                                            <td scope="row">
+                                            <td scope="row" class="text-center">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="{{$dih->id}}"
+                                                        wire:model.live='mySelected'>
+                                                </div>
+                                            </td>
+                                            <td>
                                                 {{$dih->name}}
                                             </td>
                                             <td>

@@ -174,5 +174,20 @@
             })
             })
     });
+
+    document.addEventListener('livewire:initialized', () =>{
+        @this.on('notAllowed',(event) => {
+            const data=event
+            swal.fire({
+                toast: true,
+                position: "top",
+                icon:data[0]['icon'],
+                title:data[0]['title'],
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+            })
+            })
+    });
 </script>
 @endpush

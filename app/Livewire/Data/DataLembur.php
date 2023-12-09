@@ -4,6 +4,7 @@ namespace App\Livewire\Data;
 
 use App\Models\Lembur;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
@@ -35,6 +36,11 @@ class DataLembur extends Component
         $lama_lembur,
         $jam_selesai,
         $jam_mulai;
+
+    public $mySelected = [];
+    public $selectAll = false;
+    public $firstId = NULL;
+    public $lastId = NULL;
 
     public function mount()
     {
@@ -209,26 +215,227 @@ class DataLembur extends Component
         $this->nama = '';
     }
 
+    // -------- bulk ---------------------------
+
+    public function resetSelected()
+    {
+        $this->mySelected = [];
+        $this->selectAll = false;
+    }
+
+    public function updatedMySelected()
+    {
+
+        $data = Lembur::select('tb_lembur.*', 'users.name')
+            ->where('users.name', 'like', '%' . $this->search . '%')
+            ->whereBetween('tb_lembur.tanggal_lembur', [$this->dari, $this->sampai])
+            ->join('users', 'users.id', '=', 'tb_lembur.user_id')
+            ->orderBy($this->sortField, $this->sortDirection)
+            ->paginate($this->perPage);
+        $dataHrd = Lembur::select('tb_lembur.*', 'users.name')
+            ->where('tb_lembur.status', 1)
+            ->where('users.name', 'like', '%' . $this->search . '%')
+            ->whereBetween('tb_lembur.tanggal_lembur', [$this->dari, $this->sampai])
+            ->join('users', 'users.id', '=', 'tb_lembur.user_id')
+            ->orderBy($this->sortField, $this->sortDirection)
+            ->paginate($this->perPage);
+
+        if (Auth::user()->role_id == 4) {
+            if (count($this->mySelected) == $data->count()) {
+                $this->selectAll = true;
+            } else {
+                $this->selectAll = false;
+            }
+        } elseif (Auth::user()->role_id == 3) {
+            if (count($this->mySelected) == $dataHrd->count()) {
+                $this->selectAll = true;
+            } else {
+                $this->selectAll = false;
+            }
+        }
+    }
+
+    public function updatedSelectAll($value)
+    {
+        if ($value) {
+            $this->mySelected = Lembur::whereBetween('id', [$this->firstId, $this->lastId])->pluck('id');
+        } else {
+            $this->mySelected = [];
+        }
+    }
+
+    // -------- bulk HRD---------------------------
+    public function approveSelected()
+    {
+        Lembur::whereIn('id', $this->mySelected)->update([
+            'status_hrd' => 1,
+        ]);
+
+        $this->mySelected = [];
+        $this->selectAll = false;
+
+        $this->dispatch('approveHrd', [
+            'title' => 'Data Berhasil di approve!',
+            'icon' => 'success',
+        ]);
+    }
+
+    public function rejectSelected()
+    {
+        Lembur::whereIn('id', $this->mySelected)->update([
+            'status_hrd' => 2,
+        ]);
+
+        $this->mySelected = [];
+        $this->selectAll = false;
+
+        $this->dispatch('rejectHrd', [
+            'title' => 'Data Berhasil di reject!',
+            'icon' => 'success',
+        ]);
+    }
+
+    public function resetDataSelected()
+    {
+        Lembur::whereIn('id', $this->mySelected)->update([
+            'status_hrd' => 0,
+        ]);
+
+        $this->mySelected = [];
+        $this->selectAll = false;
+
+        $this->dispatch('resetHrd', [
+            'title' => 'Data Berhasil di reset!',
+            'icon' => 'success',
+        ]);
+    }
+
+    // --------------- bulk atasan ----------------
+    public function approveSelectedAtasan()
+    {
+        $data = Lembur::whereIn('id', $this->mySelected)->where('status_hrd', '>', 0)->pluck('status_hrd');
+
+
+        if ($data->count() == 0) {
+            Lembur::whereIn('id', $this->mySelected)->update([
+                'status' => 1,
+                'status_hrd' => 0,
+            ]);
+
+            $this->mySelected = [];
+            $this->selectAll = false;
+
+            $this->dispatch('approveHrd', [
+                'title' => 'Data Berhasil di approve!',
+                'icon' => 'success',
+            ]);
+        } elseif ($data->count() > 0) {
+            $this->mySelected = [];
+            $this->selectAll = false;
+
+            $this->dispatch('notAllowed', [
+                'title' => 'Data tidak bisa diproses!',
+                'icon' => 'warning',
+            ]);
+        }
+    }
+
+    public function rejectSelectedAtasan()
+    {
+        $data = Lembur::whereIn('id', $this->mySelected)->where('status_hrd', '>', 0)->pluck('status_hrd');
+
+
+        if ($data->count() == 0) {
+            Lembur::whereIn('id', $this->mySelected)->update([
+                'status' => 2,
+                'status_hrd' => NULL,
+            ]);
+
+            $this->mySelected = [];
+            $this->selectAll = false;
+
+            $this->dispatch('rejectHrd', [
+                'title' => 'Data Berhasil di reject!',
+                'icon' => 'success',
+            ]);
+        } elseif ($data->count() > 0) {
+            $this->mySelected = [];
+            $this->selectAll = false;
+
+            $this->dispatch('notAllowed', [
+                'title' => 'Data tidak bisa diproses!',
+                'icon' => 'warning',
+            ]);
+        }
+    }
+
+    public function resetDataSelectedAtasan()
+    {
+        $data = Lembur::whereIn('id', $this->mySelected)->where('status_hrd', '>', 0)->pluck('status_hrd');
+
+
+        if ($data->count() == 0) {
+            Lembur::whereIn('id', $this->mySelected)->update([
+                'status' => 0,
+                'status_hrd' => NULL,
+            ]);
+
+            $this->mySelected = [];
+            $this->selectAll = false;
+
+            $this->dispatch('resetHrd', [
+                'title' => 'Data Berhasil di reset!',
+                'icon' => 'success',
+            ]);
+        } elseif ($data->count() > 0) {
+            $this->mySelected = [];
+            $this->selectAll = false;
+
+            $this->dispatch('notAllowed', [
+                'title' => 'Data tidak bisa diproses!',
+                'icon' => 'warning',
+            ]);
+        }
+    }
+
     #[Title('Data Lembur')]
     #[Layout('layouts.app')]
     public function render()
     {
+        $dataLembur = Lembur::select('tb_lembur.*', 'users.name')
+            ->where('users.name', 'like', '%' . $this->search . '%')
+            ->whereBetween('tb_lembur.tanggal_lembur', [$this->dari, $this->sampai])
+            ->join('users', 'users.id', '=', 'tb_lembur.user_id')
+            ->orderBy($this->sortField, $this->sortDirection)
+            ->paginate($this->perPage);
+
+        $dataLemburHrd = Lembur::select('tb_lembur.*', 'users.name')
+            ->where('tb_lembur.status', 1)
+            ->where('users.name', 'like', '%' . $this->search . '%')
+            ->whereBetween('tb_lembur.tanggal_lembur', [$this->dari, $this->sampai])
+            ->join('users', 'users.id', '=', 'tb_lembur.user_id')
+            ->orderBy($this->sortField, $this->sortDirection)
+            ->paginate($this->perPage);
+
+        if (Auth::user()->role_id == 3) {
+            $data = $dataLemburHrd->count();
+            if ($data > 0) {
+                $this->firstId = $dataLemburHrd[$data - 1]->id;
+                $this->lastId = $dataLemburHrd[0]->id;
+            }
+        } elseif (Auth::user()->role_id == 4) {
+            $data = $dataLembur->count();
+            if ($data > 0) {
+                $this->firstId = $dataLembur[$data - 1]->id;
+                $this->lastId = $dataLembur[0]->id;
+            }
+        }
+
         return view('livewire.data.data-lembur', [
-            'dataLembur' => Lembur::select('tb_lembur.*', 'users.name')
-                ->where('users.name', 'like', '%' . $this->search . '%')
-                ->whereBetween('tb_lembur.tanggal_lembur', [$this->dari, $this->sampai])
-                ->join('users', 'users.id', '=', 'tb_lembur.user_id')
-                ->orderBy($this->sortField, $this->sortDirection)
-                ->paginate($this->perPage),
+            'dataLembur' => $dataLembur,
             'countAtasan' => Lembur::where('status', 0)->count(),
 
-            'dataLemburHrd' => Lembur::select('tb_lembur.*', 'users.name')
-                ->where('tb_lembur.status', 1)
-                ->where('users.name', 'like', '%' . $this->search . '%')
-                ->whereBetween('tb_lembur.tanggal_lembur', [$this->dari, $this->sampai])
-                ->join('users', 'users.id', '=', 'tb_lembur.user_id')
-                ->orderBy($this->sortField, $this->sortDirection)
-                ->paginate($this->perPage),
+            'dataLemburHrd' => $dataLemburHrd,
             'countHrd' => Lembur::where('status_hrd', 0)->count(),
 
 
