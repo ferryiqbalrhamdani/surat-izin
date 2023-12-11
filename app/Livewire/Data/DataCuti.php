@@ -2,10 +2,13 @@
 
 namespace App\Livewire\Data;
 
+use App\Exports\CutiExport;
 use App\Models\Cuti;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Rule;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -40,6 +43,16 @@ class DataCuti extends Component
     public $selectAll = false;
     public $firstId = NULL;
     public $lastId = NULL;
+
+    #[Rule('required|date', as: 'dari tanggal')]
+    public $dari_tanggal_download;
+    #[Rule('required|date|after:dari_tanggal_download', as: 'sampai tanggal')]
+    public $sampai_tanggal_download;
+    #[Rule('required|string', as: 'format data')]
+    public $format_data;
+    #[Rule('required|string')]
+    public $nama_file;
+    public $data = [];
 
     public function mount()
     {
@@ -212,6 +225,35 @@ class DataCuti extends Component
             'title' => 'Data Berhasil di reset!',
             'icon' => 'success',
         ]);
+    }
+
+    // ----------- download data ---------------
+    public function downloadData()
+    {
+        $this->validate();
+
+        if ($this->format_data == 'PDF') {
+
+            $this->data = Cuti::where('status_hrd', '>', 0)
+                ->whereBetween('tanggal_cuti', [$this->dari_tanggal_download, $this->sampai_tanggal_download])
+                ->orderBy('tanggal_cuti', 'asc')
+                ->get();
+
+            $pdf = Pdf::loadView('livewire.data.pdf.cuti-pdf', [
+                'data' => $this->data,
+                'str_date' => $this->dari_tanggal_download,
+                'n_date' => $this->sampai_tanggal_download,
+            ])->output();
+
+            return response()->streamDownload(
+                fn () => print($pdf),
+                $this->nama_file . ".pdf"
+            );
+        } elseif ($this->format_data == 'XLS') {
+            return (new CutiExport($this->dari_tanggal_download, $this->sampai_tanggal_download))->download($this->nama_file . '.xlsx');
+        } elseif ($this->format_data == 'CSV') {
+            return (new CutiExport($this->dari_tanggal_download, $this->sampai_tanggal_download))->download($this->nama_file . '.csv');
+        }
     }
 
     // -------- bulk ---------------------------

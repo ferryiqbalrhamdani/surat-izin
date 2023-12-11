@@ -83,6 +83,79 @@
     </div>
 </div>
 
+<!-- Download Modal -->
+<div wire:ignore.self class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"
+    tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Download Data</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form wire:submit.prevent='downloadData'>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12 col-lg-6">
+                                <div class="mb-3">
+                                    <label for="dari_tanggal_download" class="form-label">Dari tanggal</label>
+                                    <input type="date" id="dari_tanggal_download"
+                                        wire:model.live='dari_tanggal_download'
+                                        class="form-control @error('dari_tanggal_download') is-invalid @enderror">
+                                    @error('dari_tanggal_download')
+                                    <span class="text-danger">{{$message}}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <div class="mb-3">
+                                    <label for="sampai_tanggal_download" class="form-label">Sampai tanggal</label>
+                                    <input type="date" id="sampai_tanggal_download"
+                                        wire:model.live='sampai_tanggal_download'
+                                        class="form-control @error('sampai_tanggal_download') is-invalid @enderror">
+                                    @error('sampai_tanggal_download')
+                                    <span class="text-danger">{{$message}}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-12">
+                                <div class="mb-3">
+                                    <label for="nama_file" class="form-label">Nama File</label>
+                                    <input type="text" wire:model.live='nama_file'
+                                        class="form-control @error('nama_file') is-invalid @enderror">
+                                    @error('nama_file')
+                                    <span class="text-danger">{{$message}}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-12">
+                                <div class="mb-3">
+                                    <label for="format_data" class="form-label">Format Data</label>
+                                    <select class="form-select @error('format_data') is-invalid @enderror"
+                                        aria-label="Default select example" wire:model.live='format_data'>
+                                        <option></option>
+                                        <option value="XLS">XLS</option>
+                                        <option value="PDF">PDF</option>
+                                        <option value="CSV">CSV</option>
+                                    </select>
+                                    @error('format_data')
+                                    <span class="text-danger">{{$message}}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-dark form-control">
+                        <i class="fa-solid fa-download"></i> download
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @push('data-izin')
 <script>
     window.addEventListener('show-view-modal', event =>{
