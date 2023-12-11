@@ -2,8 +2,11 @@
 
 namespace App\Livewire\Data;
 
+use App\Exports\SuratIzinExport;
 use App\Models\SuratIzin;
+use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Rule;
@@ -11,6 +14,9 @@ use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
+use PDF;
+
 
 class DataIzin extends Component
 {
@@ -56,6 +62,10 @@ class DataIzin extends Component
     public $sampai_tanggal_download;
     #[Rule('required|string', as: 'format data')]
     public $format_data;
+    #[Rule('required|string')]
+    public $nama_file;
+
+    public $data = [];
 
     public function mount()
     {
@@ -268,8 +278,32 @@ class DataIzin extends Component
     public function downloadData()
     {
         $this->validate();
-        dd('ok');
+
+        if ($this->format_data == 'PDF') {
+
+            $this->data = SuratIzin::where('status_hrd', '>', 0)
+                ->whereBetween('tanggal_izin', [$this->dari_tanggal_download, $this->sampai_tanggal_download])
+                ->orderBy('tanggal_izin', 'asc')
+                ->get();
+
+            $pdf = PDF::loadView('livewire.data.pdf.surat-izin-pdf', [
+                'data' => $this->data,
+                'str_date' => $this->dari_tanggal_download,
+                'n_date' => $this->sampai_tanggal_download,
+            ])->output();
+
+            return response()->streamDownload(
+                fn () => print($pdf),
+                $this->nama_file . ".pdf"
+            );
+        } elseif ($this->format_data == 'XLS') {
+            return (new SuratIzinExport($this->dari_tanggal_download, $this->sampai_tanggal_download))->download($this->nama_file . '.xlsx');
+        } elseif ($this->format_data == 'CSV') {
+            return (new SuratIzinExport($this->dari_tanggal_download, $this->sampai_tanggal_download))->download($this->nama_file . '.csv');
+        }
     }
+
+
 
     // -------- bulk ---------------------------
 
@@ -283,6 +317,13 @@ class DataIzin extends Component
     {
         // dd($value);
         $data = SuratIzin::select('tb_izin.*', 'users.name')
+            ->where('users.name', 'like', '%' . $this->search . '%')
+            ->whereBetween('tb_izin.tanggal_izin', [$this->dari, $this->sampai])
+            ->join('users', 'users.id', '=', 'tb_izin.user_id')
+            ->orderBy($this->sortField, $this->sortDirection)
+            ->paginate($this->perPage);
+
+        $dataHrd = SuratIzin::select('tb_izin.*', 'users.name')
             ->where('tb_izin.status', 1)
             ->where('users.name', 'like', '%' . $this->search . '%')
             ->whereBetween('tb_izin.tanggal_izin', [$this->dari, $this->sampai])
@@ -290,10 +331,18 @@ class DataIzin extends Component
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage);
 
-        if (count($this->mySelected) == $data->count() || count($this->mySelected) == $this->perPage) {
-            $this->selectAll = true;
-        } else {
-            $this->selectAll = false;
+        if (Auth::user()->role_id == 4) {
+            if (count($this->mySelected) == $data->count()) {
+                $this->selectAll = true;
+            } else {
+                $this->selectAll = false;
+            }
+        } elseif (Auth::user()->role_id == 3) {
+            if (count($this->mySelected) == $dataHrd->count()) {
+                $this->selectAll = true;
+            } else {
+                $this->selectAll = false;
+            }
         }
     }
 

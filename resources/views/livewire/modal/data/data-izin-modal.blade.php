@@ -206,13 +206,23 @@
                             </div>
                             <div class="col-12 col-lg-12">
                                 <div class="mb-3">
+                                    <label for="nama_file" class="form-label">Nama File</label>
+                                    <input type="text" wire:model.live='nama_file'
+                                        class="form-control @error('nama_file') is-invalid @enderror">
+                                    @error('nama_file')
+                                    <span class="text-danger">{{$message}}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-12">
+                                <div class="mb-3">
                                     <label for="format_data" class="form-label">Format Data</label>
                                     <select class="form-select @error('format_data') is-invalid @enderror"
                                         aria-label="Default select example" wire:model.live='format_data'>
                                         <option></option>
-                                        <option value="1">XLS</option>
-                                        <option value="2">PDF</option>
-                                        <option value="3">CSV</option>
+                                        <option value="XLS">XLS</option>
+                                        <option value="PDF">PDF</option>
+                                        <option value="CSV">CSV</option>
                                     </select>
                                     @error('format_data')
                                     <span class="text-danger">{{$message}}</span>
@@ -243,6 +253,9 @@
 
     window.addEventListener('show-photo-modal', event =>{
         $('#photo').modal('show');
+    });
+    window.addEventListener('hide-donwload-modal', event =>{
+        $('#staticBackdrop').modal('hide');
     });
 
     document.addEventListener('livewire:initialized', () =>{
@@ -332,6 +345,22 @@
     });
     document.addEventListener('livewire:initialized', () =>{
         @this.on('notAllowed',(event) => {
+            const data=event
+            swal.fire({
+                toast: true,
+                position: "top",
+                icon:data[0]['icon'],
+                title:data[0]['title'],
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+            })
+            })
+    });
+    
+    // download
+    document.addEventListener('livewire:initialized', () =>{
+        @this.on('download',(event) => {
             const data=event
             swal.fire({
                 toast: true,

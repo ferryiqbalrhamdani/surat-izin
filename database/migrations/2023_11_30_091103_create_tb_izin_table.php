@@ -17,8 +17,8 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users');
             $table->string('keperluan_izin');
             $table->string('lama_izin');
-            $table->timestamp('tanggal_izin')->nullable();
-            $table->timestamp('sampai_tanggal')->nullable();
+            $table->date('tanggal_izin')->nullable();
+            $table->date('sampai_tanggal')->nullable();
             $table->time('jam_masuk')->format('H:i')->nullable();
             $table->time('jam_keluar')->format('H:i')->nullable();
             $table->text('keterangan_izin')->nullable()->default('text');
