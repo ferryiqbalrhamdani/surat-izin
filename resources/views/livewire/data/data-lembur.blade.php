@@ -6,7 +6,10 @@
                 <h1 class="mt-4">Data Lembur</h1>
             </div>
             <div class="mt-4">
-
+                @if (Auth::user()->role_id == 3)
+                <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><i
+                        class="fa-solid fa-download"></i> download</button>
+                @endif
                 <a class="btn btn-dark position-relative" data-bs-toggle="tooltip" data-bs-placement="left"
                     title="Pemberitahuan">
                     <i class="fa-solid fa-bell"></i>

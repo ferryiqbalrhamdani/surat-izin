@@ -286,7 +286,7 @@ class DataIzin extends Component
                 ->orderBy('tanggal_izin', 'asc')
                 ->get();
 
-            $pdf = PDF::loadView('livewire.data.pdf.surat-izin-pdf', [
+            $pdf = FacadePdf::loadView('livewire.data.pdf.surat-izin-pdf', [
                 'data' => $this->data,
                 'str_date' => $this->dari_tanggal_download,
                 'n_date' => $this->sampai_tanggal_download,
