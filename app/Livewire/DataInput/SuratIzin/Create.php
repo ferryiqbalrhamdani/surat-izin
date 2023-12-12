@@ -136,11 +136,8 @@ class Create extends Component
             $keterangan = $this->keterangan;
             $sampai_tanggal = $this->tanggal_izin;
 
-            $awal = Carbon::parse($jam_masuk)->format('H:i');
-            $akhir = Carbon::parse($this->jam_keluar)->format('H:i');
-
-            $jamAwal = explode(':', $awal);
-            $jamAkhir = explode(':', $akhir);
+            $jamAwal = explode(':', $jam_masuk);
+            $jamAkhir = explode(':', $jam_keluar);
 
             $jam = $jamAkhir[0] - $jamAwal[0];
             $menit = $jamAkhir[1] - $jamAwal[1];

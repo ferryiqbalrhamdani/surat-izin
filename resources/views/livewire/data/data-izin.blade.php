@@ -234,7 +234,7 @@
                                         @if(Auth::user()->role_id == 4)
                                         @if ($dataIzin->count() == 0)
                                         <tr>
-                                            <td colspan="8" class="text-center">Tidak ada data.</td>
+                                            <td colspan="9" class="text-center">Tidak ada data.</td>
                                         </tr>
                                         @else
                                         @foreach ($dataIzin as $di)
@@ -322,7 +322,7 @@
                                         @elseif(Auth::user()->role_id == 3)
                                         @if ($dataIzinHrd->count() == 0)
                                         <tr>
-                                            <td colspan="8" class="text-center">Tidak ada data.</td>
+                                            <td colspan="9" class="text-center">Tidak ada data.</td>
                                         </tr>
                                         @else
                                         @foreach ($dataIzinHrd as $dih)

@@ -64,6 +64,11 @@
             </tr>
         </thead>
         <tbody>
+            @if ($data->count() == 0)
+            <tr>
+                <td colspan="9" class="text-center">Tidak ada data.</td>
+            </tr>
+            @else
             @foreach ($data as $s)
             <tr @if($s->status_hrd == 2) style="color: red" @endif>
                 <td>
@@ -95,6 +100,7 @@
 
             </tr>
             @endforeach
+            @endif
         </tbody>
     </table>
     <div style="font-size: 12px; margin-top: -20px">
