@@ -52,6 +52,7 @@ class DataCuti extends Component
     public $format_data;
     #[Rule('required|string')]
     public $nama_file;
+
     public $data = [];
 
     public function mount()
