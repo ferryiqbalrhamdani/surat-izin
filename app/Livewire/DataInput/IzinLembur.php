@@ -18,7 +18,7 @@ class IzinLembur extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
 
-    public $dari, $sampai, $lembur_id, $lama_lembur, $status, $status_hrd;
+    public $dari, $sampai, $lembur_id, $lama_lembur, $status, $status_hrd, $hari_libur;
 
     public $perPage = 5;
     public $sortField = 'created_at';
@@ -102,6 +102,7 @@ class IzinLembur extends Component
         $this->jam_mulai = $data->jam_mulai;
         $this->jam_selesai = $data->jam_akhir;
         $this->keterangan = $data->keterangan_lembur;
+        $this->hari_libur = $data->hari_libur;
 
         $this->dispatch('show-edit-modal');
     }
@@ -113,6 +114,7 @@ class IzinLembur extends Component
         $this->jam_mulai = '';
         $this->jam_selesai = '';
         $this->keterangan = '';
+        $this->hari_libur = '';
     }
 
     public function edit()
@@ -130,16 +132,27 @@ class IzinLembur extends Component
         $status = 0;
         $status_hrd = null;
 
-        if ($lamaLembur > '05:00') {
-            $upahLemburPerjam = 0;
-            $upahLembur = 100000;
-        } else if ($lamaLembur >= '03:00') {
-            $upahLemburPerjam = 15000;
-            $upahMakan = 20000;
-            $upahLembur = 15000 * $jam + $upahMakan;
-        } else {
-            $upahLemburPerjam = 15000;
-            $upahLembur = 15000 * $jam;
+        if ($this->hari_libur == 'Iya') {
+            if ($lamaLembur > '05:00') {
+                $upahLemburPerjam = 0;
+                $upahLembur = 100000;
+            } else if ($lamaLembur >= '03:00') {
+                $upahLemburPerjam = 15000;
+                $upahMakan = 20000;
+                $upahLembur = 15000 * $jam + $upahMakan;
+            } else {
+                $upahLemburPerjam = 15000;
+                $upahLembur = 15000 * $jam;
+            }
+        } elseif ($this->hari_libur == 'Tidak') {
+            if ($lamaLembur >= '03:00') {
+                $upahLemburPerjam = 15000;
+                $upahMakan = 20000;
+                $upahLembur = 15000 * $jam + $upahMakan;
+            } else {
+                $upahLemburPerjam = 15000;
+                $upahLembur = 15000 * $jam;
+            }
         }
 
         if (Auth::user()->role_id == 4) {
@@ -147,10 +160,10 @@ class IzinLembur extends Component
             $status_hrd = 0;
         }
 
-
         Lembur::where('id', $this->lembur_id)->update([
             'user_id' => Auth::user()->id,
             'tanggal_lembur' => date_create($this->tanggal_lembur),
+            'hari_libur' => $this->hari_libur,
             'jam_mulai' => $this->jam_mulai,
             'jam_akhir' => $this->jam_selesai,
             'lama_lembur' => $lamaLembur,
@@ -167,6 +180,7 @@ class IzinLembur extends Component
         $this->jam_mulai = '';
         $this->jam_selesai = '';
         $this->keterangan = '';
+        $this->hari_libur = '';
 
         $this->dispatch('close-edit-modal');
         $this->dispatch('update', [
@@ -182,12 +196,13 @@ class IzinLembur extends Component
 
         $data = Lembur::where('id', $this->lembur_id)->first();
 
-        $this->tanggal_lembur = Carbon::parse($data->tanggal_lembur)->format('Y-m-d');
+        $this->tanggal_lembur = Carbon::parse($data->tanggal_lembur)->isoFormat('dddd, D MMMM Y');
         $this->jam_mulai = $data->jam_mulai;
         $this->jam_selesai = $data->jam_akhir;
         $this->lama_lembur = $data->lama_lembur;
         $this->status = $data->status;
         $this->status_hrd = $data->status_hrd;
+        $this->hari_libur = $data->hari_libur;
         $this->keterangan = $data->keterangan_lembur;
 
         $this->dispatch('show-view-modal');
@@ -203,6 +218,7 @@ class IzinLembur extends Component
         $this->status = '';
         $this->status_hrd = '';
         $this->keterangan = '';
+        $this->hari_libur = '';
     }
 
     #[Title('Izin Lembur')]

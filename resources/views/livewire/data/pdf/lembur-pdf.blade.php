@@ -55,6 +55,7 @@
                 <th style="text-align: center">No</th>
                 <th style="text-align: center">Nama</th>
                 <th style="text-align: center">Tanggal</th>
+                <th style="text-align: center">Hari Libur</th>
                 <th style="text-align: center">Dari Jam</th>
                 <th style="text-align: center">Sampai Jam</th>
                 <th style="text-align: center">Lama Lembur</th>
@@ -80,6 +81,9 @@
                 </td>
                 {{-- <td>{{ date('l', strtotime($s->tanggal_izin))}}</td> --}}
                 <td>{{ Carbon\Carbon::parse($s->tanggal_lembur)->translatedFormat('d/m/Y')}}</td>
+                <td>
+                    {{$s->hari_libur}}
+                </td>
                 <td>{{ Carbon\Carbon::parse($s->jam_mulai)->translatedFormat('H:i')}}</td>
                 <td>{{ Carbon\Carbon::parse($s->jam_akhir)->translatedFormat('H:i')}}</td>
                 <td>{{ Carbon\Carbon::parse($s->lama_lembur)->translatedFormat('G')}} jam</td>
@@ -106,7 +110,7 @@
         </tbody>
         <thead>
             <tr>
-                <td colspan="8" style="border: none"></td>
+                <td colspan="9" style="border: none"></td>
                 <td style="background-color: #f2f2f2;">Total Keseluruhan</td>
                 <td colspan="1" style="background-color: #f2f2f2;">Rp {{number_format($data->sum('upah_lembur'),
                     0,',','.')}} (+)
@@ -115,7 +119,7 @@
         </thead>
         <thead>
             <tr style="color: red">
-                <td colspan=" 8" style="border: none">
+                <td colspan=" 9" style="border: none">
                 </td>
                 <td>Total Reject</td>
                 <td colspan="1">Rp {{number_format($data->where('status_hrd',
@@ -126,7 +130,7 @@
         </thead>
         <thead>
             <tr>
-                <td colspan="8" style="border: none"></td>
+                <td colspan="9" style="border: none"></td>
                 <th>Total Approve</th>
                 <td colspan="1" style="background-color: #f2f2f2;">Rp {{number_format($data->where('status_hrd',
                     1)->sum('upah_lembur'), 0,',','.')}}

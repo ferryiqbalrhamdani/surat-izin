@@ -24,6 +24,12 @@
                         <h6>: {{ $tanggal_lembur }}</h6>
                     </div>
                     <div class="col-5 col-lg-4">
+                        <h6>Hari Libur</h6>
+                    </div>
+                    <div class="col-7 col-lg-8">
+                        <h6>: {{ $hari_libur }}</h6>
+                    </div>
+                    <div class="col-5 col-lg-4">
                         <h6>Jam Mulai</h6>
                     </div>
                     <div class="col-7 col-lg-8">
@@ -57,6 +63,15 @@
                         </h6>
                     </div>
                     @if(Auth::user()->role_id == 3)
+                    @if($hari_libur == 'Tidak')
+                    <div class="col-5 col-lg-4">
+                        <h6>Upah Lembur</h6>
+                    </div>
+                    <div class="col-7 col-lg-8">
+                        <h6>: Rp 15.000/jam
+                        </h6>
+                    </div>
+                    @elseif($hari_libur == 'Iya')
                     @if(date('G', strtotime($lama_lembur)) <= 5) <div class="col-5 col-lg-4">
                         <h6>Upah Lembur</h6>
                 </div>
@@ -64,6 +79,7 @@
                     <h6>: Rp 15.000/jam
                     </h6>
                 </div>
+                @endif
                 @endif
                 @endif
                 <div class="col-5 col-lg-4">
@@ -118,8 +134,11 @@
                                 @endif
                             </td>
                             <td>
+                                @if($hari_libur == 'Iya')
                                 @if(date('G', strtotime($lama_lembur)) <= 5) Rp {{number_format($upah_lembur_perjam *
-                                    date('G', strtotime($lama_lembur)), 0, ',' ,'.')}} @else - @endif </td>
+                                    date('G', strtotime($lama_lembur)), 0, ',' ,'.')}} @else - @endif
+                                    @elseif($hari_libur=='Tidak' ) Rp {{number_format($upah_lembur_perjam * date('G',
+                                    strtotime($lama_lembur)), 0, ',' ,'.')}} @endif </td>
                             <td>
                                 @if($upah_lembur > 0)
                                 Rp {{number_format($upah_lembur, 0, ',','.')}}

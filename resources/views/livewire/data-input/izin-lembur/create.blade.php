@@ -12,13 +12,42 @@
                     <div class="card shadow-sm">
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-12 col-lg-12 col-md-12 col-sm-12 mb-3">
+                                <div class="col-12 col-lg-6 col-md-6 col-sm-12 mb-3">
                                     <label for="tanggal_lembur" class="form-label">Tanggal Lembur<span
                                             class="text-danger"><sup>*</sup></span></label>
                                     <input type="date" id="tanggal_lembur"
                                         class="form-control @error('tanggal_lembur') is-invalid @enderror"
                                         wire:model.live='tanggal_lembur'>
                                     @error('tanggal_lembur')
+                                    <span class="text-danger">{{$message}}</span>
+                                    @enderror
+                                </div>
+                                <div class="col-12 col-lg-6 col-md-6 col-sm-12 mb-3">
+                                    <label for="hari_libur" class="form-label">Hari Libur<span
+                                            class="text-danger"><sup>*</sup></span></label>
+                                    <div class="row">
+                                        <div class="col-12 col-lg-6 col-sm-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input" name="flexRadioDefault"
+                                                    wire:model.live='hari_libur' type="radio" value="Iya" id="iya">
+                                                <label class="form-check-label" for="iya">
+                                                    Iya
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-lg-6 col-sm-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input" name="flexRadioDefault"
+                                                    wire:model.live='hari_libur' type="radio" value="Tidak" id="tidak">
+                                                <label class="form-check-label" for="tidak">
+                                                    Tidak
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    @error('hari_libur')
                                     <span class="text-danger">{{$message}}</span>
                                     @enderror
                                 </div>

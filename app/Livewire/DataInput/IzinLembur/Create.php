@@ -20,6 +20,8 @@ class Create extends Component
     public $jam_selesai = '18:00';
     #[Rule('required')]
     public $keterangan;
+    #[Rule('required')]
+    public $hari_libur = 'Tidak';
 
     public function mount()
     {
@@ -43,27 +45,45 @@ class Create extends Component
         $status = 0;
         $status_hrd = null;
 
-        if ($lamaLembur > '05:00') {
-            $upahLemburPerjam = 0;
-            $upahLembur = 100000;
-        } else if ($lamaLembur >= '03:00') {
-            $upahLemburPerjam = 15000;
-            $upahMakan = 20000;
-            $upahLembur = 15000 * $jam + $upahMakan;
-        } else {
-            $upahLemburPerjam = 15000;
-            $upahLembur = 15000 * $jam;
+        if ($this->hari_libur == 'Iya') {
+            if ($lamaLembur > '05:00') {
+                $upahLemburPerjam = 0;
+                $upahLembur = 100000;
+            } else if ($lamaLembur >= '03:00') {
+                $upahLemburPerjam = 15000;
+                $upahMakan = 20000;
+                $upahLembur = 15000 * $jam + $upahMakan;
+            } else {
+                $upahLemburPerjam = 15000;
+                $upahLembur = 15000 * $jam;
+            }
+
+            if (Auth::user()->role_id == 4) {
+                $status = 1;
+                $status_hrd = 0;
+            }
+        } elseif ($this->hari_libur == 'Tidak') {
+            if ($lamaLembur >= '03:00') {
+                $upahLemburPerjam = 15000;
+                $upahMakan = 20000;
+                $upahLembur = 15000 * $jam + $upahMakan;
+            } else {
+                $upahLemburPerjam = 15000;
+                $upahLembur = 15000 * $jam;
+            }
+
+            if (Auth::user()->role_id == 4) {
+                $status = 1;
+                $status_hrd = 0;
+            }
         }
 
-        if (Auth::user()->role_id == 4) {
-            $status = 1;
-            $status_hrd = 0;
-        }
 
 
         Lembur::create([
             'user_id' => Auth::user()->id,
             'tanggal_lembur' => date_create($this->tanggal_lembur),
+            'hari_libur' => $this->hari_libur,
             'jam_mulai' => $this->jam_mulai,
             'jam_akhir' => $this->jam_selesai,
             'lama_lembur' => $lamaLembur,

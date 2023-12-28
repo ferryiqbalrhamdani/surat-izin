@@ -103,6 +103,15 @@ class Create extends Component
             }
         }
 
+        $status = 0;
+        $status_hrd = null;
+
+
+        if (Auth::user()->role_id == 4) {
+            $status = 1;
+            $status_hrd = 0;
+        }
+
         Cuti::create([
             'user_id' => Auth::user()->id,
             'keperluan_cuti' => $this->keperluan_cuti,
@@ -112,6 +121,8 @@ class Create extends Component
             'lama_cuti' => $this->lama_cuti,
             'durasi' => $lama_cuti,
             'pilihan' => $this->pilihan,
+            'status' => $status,
+            'status_hrd' => $status_hrd,
         ]);
 
 

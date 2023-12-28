@@ -39,6 +39,7 @@ class DataLembur extends Component
         $status_hrd,
         $lama_lembur,
         $jam_selesai,
+        $hari_libur,
         $jam_mulai;
 
     public $mySelected = [];
@@ -213,6 +214,8 @@ class DataLembur extends Component
         $this->upah_lembur_perjam = $data->upah_lembur_perjam;
         $this->upah_lembur = $data->upah_lembur;
         $this->uang_makan = $data->uang_makan;
+
+        $this->hari_libur = $data->hari_libur;
 
         $this->dispatch('show-view-modal');
     }
